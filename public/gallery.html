@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery — Villa Maris Tiburon</title>
+  <meta name="description" content="Browse the photo gallery of Villa Maris Tiburon — panoramic bay views, eight luxury suites, gourmet kitchen, outdoor decks, and the beauty of the Marin coastline.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .gallery-filter {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .filter-btn {
+      padding: 0.5rem 1.2rem;
+      background: none;
+      border: 1px solid var(--border);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: #fff;
+    }
+    .gallery-masonry {
+      columns: 3;
+      column-gap: 0.75rem;
+    }
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+    .gallery-item img {
+      width: 100%;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.04); }
+    .gallery-item-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(6,15,26,0.5);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.5rem;
+    }
+    .gallery-item:hover .gallery-item-overlay { opacity: 1; }
+    @media (max-width: 900px) { .gallery-masonry { columns: 2; } }
+    @media (max-width: 600px) { .gallery-masonry { columns: 1; } }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Villa Maris</span>
+    <span class="nav-logo-sub">Tiburon · Private Luxury Estate</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/rooms.html">Suites</a></li>
+    <li><a href="/amenities.html">Amenities</a></li>
+    <li><a href="/activities.html">Experiences</a></li>
+    <li><a href="/dining.html">Dining</a></li>
+    <li><a href="/gallery.html" class="active">Gallery</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <a href="/reservations.html" class="nav-book">Book Now</a>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="/">Home</a><a href="/about.html">About</a><a href="/rooms.html">Suites</a>
+  <a href="/amenities.html">Amenities</a><a href="/activities.html">Experiences</a>
+  <a href="/dining.html">Dining</a><a href="/gallery.html">Gallery</a>
+  <a href="/contact.html">Contact</a>
+  <a href="/reservations.html" style="color:var(--gold);">Book Now</a>
+</div>
+
+<div class="page-hero" style="background-image: url('/images/1-ac2243c6516e2d39c4d30877e9423ccf-o.webp');">
+  <div class="page-hero-content">
+    <span class="page-hero-eyebrow">Photo Gallery</span>
+    <h1 class="page-hero-title">See Villa Maris<br>in Every Light</h1>
+  </div>
+</div>
+
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span> Photo Gallery
+</div>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="section-header reveal" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1.5rem;margin-bottom:2.5rem;">
+      <div>
+        <span class="section-eyebrow">Photo Gallery</span>
+        <h2 class="section-title">Villa Maris in Pictures</h2>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-mid);max-width:400px;font-weight:300;">Click any image to view full-size. Use arrow keys or buttons to navigate through the gallery.</p>
+    </div>
+
+    <div class="gallery-masonry" id="galleryGrid">
+      <div class="gallery-item reveal">
+        <img src="/images/3-6fdfabae155055c8a1467f7e860dd9bd-o.webp" alt="Upper deck with panoramic bay view and fire pit seating" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/1-ac2243c6516e2d39c4d30877e9423ccf-o.webp" alt="Grand living room with vaulted beams and bay view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/4-061f060b94c4c4bab2d96e2ae411b4f9-o.webp" alt="Aerial sunset view of Tiburon peninsula" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/35-f4062c2fc52b1004f6a95a849ecd9df1-o.webp" alt="Deck fire pit with bay view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/40-0781fac87434f55ffb484484bf1682f8-o.webp" alt="Bay-view hot tub" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/5-01c79744302a13aec7a709f0d9fd08e5-o.webp" alt="San Francisco skyline night view from Tiburon" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/18-697800410cd4a8e747504cbbfc00cebe-o.webp" alt="Soaking tub with panoramic bay view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/6-5db5923ca6af48f4dccf065a4cf532f2-o.webp" alt="Living room with fireplace and bay view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/30-5a5a1a0bb48d42425a8f4bf5dc73f8e2-o.webp" alt="Estate exterior with rose garden and bay view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/16-148c5b450b47725874df2c4fc49fdba2-o.webp" alt="Master bedroom with bay view balcony and fireplace" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/7-ad18489104ec3a0a5b4af7c9588e86d5-o.webp" alt="Kitchen and dining open plan with live-edge table" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/12-0b03bd3c2a6c37ddb01ac97422895f29-o.webp" alt="Dining room with bay view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/8-89faefdb635d877a8ec40abf7d58a12d-o.webp" alt="Gourmet chef's kitchen with marble island" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/20-5b47b4076c2ed1b1f6a98b70c2174b10-o.webp" alt="Private balcony with bay view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/11-7cb3176ce156d13a4e28da9585b8e088-o.webp" alt="Second living room with bay view and chandelier" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/17-d5c8fb6e9347d80cc8f321a531cb71f3-o.webp" alt="Bedroom with fireplace and garden doors" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/45-42ed3059b7ecf26838be76a595089e3a-o.webp" alt="Bay landscape with native wildflowers" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/22-4fd487274e5f84132129ab5fca7f3825-o.webp" alt="Secondary living room with fireplace and bay views" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/50-e797dc48caf532344fec95bfdac49258-o.webp" alt="Tiburon marina aerial with Golden Gate Bridge" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/10-c30544792290ba51f221122ed300556f-o.webp" alt="Garden-view dining room" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/13-9855461d9fd773b38cbdd6219befcb98-o.webp" alt="Kitchen with farmhouse sink and Wolf range" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/25-f10b0faf6f46c2aabc68ceaa96d064fb-o.webp" alt="Soaking tub with herringbone tile" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/9-17dd6bedc702104dc8db9981041972cf-o.webp" alt="Kitchen island with wine fridge" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/14-aad662090907cdfcbd521e458403f0ac-o.webp" alt="Estate kitchen detail" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/15-ceba8a4ffed9b1ab8f0fd3e0465d3011-o.webp" alt="Hallway with barn door and reading nook" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/19-9d6c593b28029e369a42f7713b674a14-o.webp" alt="Villa Maris interior" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/21-6a0af833b8914471f6868eaeb20bfae6-o.webp" alt="Villa Maris suite" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/23-7654ea0f4e14b092cfad5ceff64ec393-o.webp" alt="Villa Maris interior" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/24-96454e899bac7fd30537ce65aa303c4d-o.webp" alt="Villa Maris bathroom" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/26-66447955bb461dfc55fb5c3cae470eb4-o.webp" alt="Villa Maris detail" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/27-8372f7d2f76a82ce3d287c9b3108d60c-o.webp" alt="Villa Maris suite" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/28-c1e42e999062ccab12f0ed535332a575-o.webp" alt="Villa Maris exterior" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/29-95949d010570a9e9d6ce8ef95d59a832-o.webp" alt="Villa Maris garden" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/31-db14116a6626ce8963f656903ec08820-o.webp" alt="Villa Maris view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/32-77c6f08921245f418972d71ee9007561-o.webp" alt="Villa Maris deck" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/33-ccb58df571c925cd191470419354e356-o.webp" alt="Villa Maris suite" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/34-342b09eed1d01295a4e91acc011d2312-o.webp" alt="Villa Maris interior" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/36-66dcbcd24815f39df09c23baf5f77e32-o.webp" alt="Villa Maris outdoor area" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/37-db501a4dc6acd487f5289ab29d2bdda1-o.webp" alt="Villa Maris garden" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/38-ff18b6737837bb5abb88554b028fbe23-o.webp" alt="Villa Maris view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/39-66aff5088394ec4063824cdc4631c7fe-o.webp" alt="Villa Maris exterior" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/41-a5586486454c529f0442f4686fef5d18-o.webp" alt="Villa Maris garden detail" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/42-1e8c2840de5e52b057061d523b4ee1d9-o.webp" alt="Villa Maris outdoor" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/43-683fe42583f61daec79799f44fa1e8eb-o.webp" alt="Villa Maris bay view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/44-3c14e3e7af22f3a25d29270ec232c4f8-o.webp" alt="Villa Maris exterior" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/46-5925d263054bbf071453ef6a9a255239-o.webp" alt="Villa Maris landscape" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/48-729c4d6ffa5eae31bf7d3ae9a876d13d-o.webp" alt="Villa Maris view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/51-caf14df7cee3ec36739144bc53e3e60b-o.webp" alt="Tiburon bay area" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/52-18c9d70fb1cf5388c009143c8d825a80-o.webp" alt="Villa Maris exterior" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/53-25fbc70429012771d9cf7781de75bc85-o.webp" alt="Villa Maris garden" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/54-e5c430532022d8b87991f602bc3b1fcd-o.webp" alt="Villa Maris bay view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/55-39a9f254ecf2d92ae231ec726262aaff-o.webp" alt="Villa Maris landscape" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/56-6a7a37ae09834f5ab8b73e0f4200e39b-o.webp" alt="Villa Maris exterior" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="/images/57-98f980352e2bf4136c7feb23191306e8-o.webp" alt="Villa Maris view" loading="lazy">
+        <div class="gallery-item-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">&#x2715;</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev"><i class="fas fa-chevron-left"></i></button>
+  <div class="lightbox-inner">
+    <img src="" alt="Gallery image" id="lightboxImg">
+  </div>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext"><i class="fas fa-chevron-right"></i></button>
+</div>
+
+<div class="cta-banner">
+  <h2 class="cta-title">Ready to Experience Villa Maris?</h2>
+  <p class="cta-subtitle">The photos don't do it justice. Come see the views in person.</p>
+  <div class="cta-buttons">
+    <a href="/reservations.html" class="btn btn-dark">Book a Suite</a>
+    <a href="/rooms.html" class="btn btn-outline-white" style="border-color:rgba(255,255,255,0.5);color:#fff;">View Suites</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Villa Maris</div>
+      <span class="footer-brand-sub">Tiburon · Private Luxury Estate</span>
+      <p>Eight curated suites, panoramic bay views, and extraordinary experiences in Tiburon, California.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="/about.html">About</a></li><li><a href="/rooms.html">Suites</a></li>
+      <li><a href="/amenities.html">Amenities</a></li><li><a href="/activities.html">Experiences</a></li>
+      <li><a href="/dining.html">Dining</a></li><li><a href="/gallery.html">Gallery</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Book</h4><ul>
+      <li><a href="/reservations.html">Reservations</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4>
+      <p>Tiburon, CA 94920</p>
+      <p style="margin-top:1rem;"><a href="tel:+14155550180" style="color:rgba(245,240,232,0.55);text-decoration:none;">+1 (415) 555-0180</a></p>
+      <p><a href="mailto:stay@villamaristiburon.com" style="color:rgba(245,240,232,0.55);text-decoration:none;">stay@villamaristiburon.com</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Villa Maris Tiburon LLC · All Rights Reserved</div>
+    <div class="footer-social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-pinterest-p"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

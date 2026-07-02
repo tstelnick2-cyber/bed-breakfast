@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amenities — Villa Maris Tiburon</title>
+  <meta name="description" content="Discover the full range of amenities at Villa Maris Tiburon — bay-view hot tub, fire pit deck, gourmet kitchen, yoga deck, private gardens, and more.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .amenity-category {
+      margin-bottom: 4rem;
+    }
+    .amenity-category-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      color: var(--navy);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .amenity-category-title i { color: var(--gold); font-size: 1.4rem; }
+    .amenity-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .amenity-list-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: var(--cream);
+      border: 1px solid transparent;
+      transition: var(--transition);
+    }
+    .amenity-list-item:hover { border-color: var(--gold); background: #fff; }
+    .amenity-list-icon {
+      color: var(--gold);
+      font-size: 1rem;
+      margin-top: 0.15rem;
+      flex-shrink: 0;
+    }
+    .amenity-list-text strong {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.2rem;
+    }
+    .amenity-list-text span {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+    .highlight-amenities {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+    .highlight-amenity {
+      position: relative;
+      overflow: hidden;
+      height: 340px;
+    }
+    .highlight-amenity img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+    .highlight-amenity:hover img { transform: scale(1.06); }
+    .highlight-amenity-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(6,15,26,0.85) 0%, transparent 60%);
+    }
+    .highlight-amenity-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1.5rem;
+    }
+    .highlight-amenity-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .highlight-amenity-desc {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.5;
+    }
+    @media (max-width: 900px) {
+      .amenity-list { grid-template-columns: 1fr 1fr; }
+      .highlight-amenities { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .amenity-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Villa Maris</span>
+    <span class="nav-logo-sub">Tiburon · Private Luxury Estate</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/rooms.html">Suites</a></li>
+    <li><a href="/amenities.html" class="active">Amenities</a></li>
+    <li><a href="/activities.html">Experiences</a></li>
+    <li><a href="/dining.html">Dining</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <a href="/reservations.html" class="nav-book">Book Now</a>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="/">Home</a><a href="/about.html">About</a><a href="/rooms.html">Suites</a>
+  <a href="/amenities.html">Amenities</a><a href="/activities.html">Experiences</a>
+  <a href="/dining.html">Dining</a><a href="/gallery.html">Gallery</a>
+  <a href="/contact.html">Contact</a>
+  <a href="/reservations.html" style="color:var(--gold);">Book Now</a>
+</div>
+
+<div class="page-hero" style="background-image: url('/images/40-0781fac87434f55ffb484484bf1682f8-o.webp');">
+  <div class="page-hero-content">
+    <span class="page-hero-eyebrow">Estate Amenities</span>
+    <h1 class="page-hero-title">Every Detail<br>Considered</h1>
+  </div>
+</div>
+
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span> Amenities
+</div>
+
+<!-- HIGHLIGHT AMENITIES -->
+<section class="section" style="padding-bottom:0;">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Signature Amenities</span>
+      <h2 class="section-title">The Highlights</h2>
+      <div class="gold-divider centered"></div>
+      <p class="section-subtitle">From a bay-view hot tub under the stars to sunrise yoga on the deck, Villa Maris offers amenities that transform a stay into an experience.</p>
+    </div>
+    <div class="highlight-amenities" style="margin-top:3rem;">
+      <div class="highlight-amenity reveal">
+        <img src="/images/40-0781fac87434f55ffb484484bf1682f8-o.webp" alt="Bay-view hot tub">
+        <div class="highlight-amenity-overlay"></div>
+        <div class="highlight-amenity-content">
+          <div class="highlight-amenity-name">Bay-View Hot Tub</div>
+          <div class="highlight-amenity-desc">Soak under the stars with the lights of San Francisco shimmering across the water.</div>
+        </div>
+      </div>
+      <div class="highlight-amenity reveal reveal-delay-1">
+        <img src="/images/35-f4062c2fc52b1004f6a95a849ecd9df1-o.webp" alt="Fire pit deck">
+        <div class="highlight-amenity-overlay"></div>
+        <div class="highlight-amenity-content">
+          <div class="highlight-amenity-name">Panoramic Fire Pit Deck</div>
+          <div class="highlight-amenity-desc">A wraparound deck with lava-stone fire pit and luxury outdoor seating — 180° bay views at every turn.</div>
+        </div>
+      </div>
+      <div class="highlight-amenity reveal reveal-delay-2">
+        <img src="/images/3-6fdfabae155055c8a1467f7e860dd9bd-o.webp" alt="Upper deck">
+        <div class="highlight-amenity-overlay"></div>
+        <div class="highlight-amenity-content">
+          <div class="highlight-amenity-name">Multi-Level View Decks</div>
+          <div class="highlight-amenity-desc">Multiple terraced outdoor spaces, each framing a different sweep of the bay, bridges, and headlands.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FULL AMENITY LIST -->
+<section class="section">
+  <div class="section-inner">
+
+    <div class="amenity-category reveal">
+      <div class="amenity-category-title"><i class="fas fa-home"></i> Estate & Outdoor</div>
+      <div class="amenity-list">
+        <div class="amenity-list-item">
+          <i class="fas fa-hot-tub amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Bay-View Hot Tub</strong><span>Seats 6. Open year-round. Views of SF skyline and Golden Gate.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-fire amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Outdoor Fire Pit</strong><span>Lava-stone fire pit with wraparound luxury seating on upper deck.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-seedling amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Rose Gardens</strong><span>Manicured English rose gardens with seasonal blooms surrounding the estate.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-spa amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Yoga & Meditation Deck</strong><span>Dedicated sunrise yoga deck overlooking Richardson Bay.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-umbrella-beach amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Terraced Outdoor Seating</strong><span>Multiple seating areas at different elevations for shade or full sun.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-leaf amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Herb & Kitchen Garden</strong><span>Estate garden provides fresh herbs and vegetables for our kitchen.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-car amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Complimentary Parking</strong><span>Private estate parking for all guests. EV charging available.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-mountain amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Panoramic View Terraces</strong><span>Three distinct viewpoints: morning, afternoon, and sunset optimal positions.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-binoculars amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Stargazing Setup</strong><span>Telescope and star charts available for clear Marin nights.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="amenity-category reveal">
+      <div class="amenity-category-title"><i class="fas fa-utensils"></i> Dining & Kitchen</div>
+      <div class="amenity-list">
+        <div class="amenity-list-item">
+          <i class="fas fa-egg amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Daily Gourmet Breakfast</strong><span>Seasonal farm-to-table morning meal prepared fresh by our estate chef.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-wine-glass amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Evening Wine & Cheese Hour</strong><span>California wines, artisan charcuterie, and local cheeses served fireside nightly.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-coffee amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>All-Day Coffee & Tea Bar</strong><span>Blue Bottle coffee, specialty teas, fresh-pressed juices, and sparkling water.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-blender amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Guest Kitchen Access</strong><span>Full access to our Wolf range kitchen for light meal preparation between 10am–9pm.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-snowflake amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Dedicated Guest Refrigerator</strong><span>Private mini-fridge in each suite stocked with local sparkling water and seasonal fruit.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-glass-cheers amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Wine Cellar Access</strong><span>Curated estate wine cellar — purchase by the bottle for in-suite or outdoor enjoyment.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-birthday-cake amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Celebration Arrangements</strong><span>Birthday cakes, flowers, champagne, and special occasion setups available on request.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-concierge-bell amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>In-Suite Breakfast Option</strong><span>Private breakfast service delivered to your balcony or patio on request.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-apple-alt amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Seasonal Fruit & Snack Basket</strong><span>Complimentary welcome basket with local fruits, nuts, and artisan chocolates.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="amenity-category reveal">
+      <div class="amenity-category-title"><i class="fas fa-spa"></i> Wellness & Relaxation</div>
+      <div class="amenity-list">
+        <div class="amenity-list-item">
+          <i class="fas fa-spa amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Morning Yoga Classes</strong><span>Daily sunrise yoga sessions on the bay-view deck with resident instructor Simone.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-pray amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Guided Meditation</strong><span>Optional morning meditation sessions overlooking the bay. 20-minute guided practice.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-hot-tub amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>In-Suite Soaking Tubs</strong><span>Select suites feature handcrafted soaking tubs with panoramic bay views.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-hands amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>In-Room Massage (On Request)</strong><span>Licensed massage therapists available for in-suite sessions. 60 or 90 minute sessions.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-bath amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Luxury Bath Amenities</strong><span>Aesop and Malin+Goetz bath products in all suites. Plush robes and slippers.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-dumbbell amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Fitness Equipment</strong><span>Yoga mats, resistance bands, and meditation cushions available to all guests.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="amenity-category reveal">
+      <div class="amenity-category-title"><i class="fas fa-concierge-bell"></i> Services & Technology</div>
+      <div class="amenity-list">
+        <div class="amenity-list-item">
+          <i class="fas fa-wifi amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>High-Speed Fiber WiFi</strong><span>1Gb fiber internet throughout estate and all outdoor areas.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-tv amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Smart TV with Streaming</strong><span>65" 4K smart TVs with Netflix, Apple TV, and Sonos audio in all suites.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-concierge-bell amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Dedicated Concierge</strong><span>Personal concierge for dining reservations, activities, and transportation.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-car amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Ferry Shuttle Service</strong><span>Complimentary shuttle to Tiburon Ferry for day trips to San Francisco.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-luggage-cart amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Luggage Assistance</strong><span>Arrival and departure luggage handling and storage.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-wind amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Climate Control</strong><span>Individual climate control in each suite. Radiant heated floors in select baths.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-lock amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Keyless Suite Entry</strong><span>Smart lock entry with personal codes. Safe deposit box in each suite.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-tshirt amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Daily Housekeeping</strong><span>Full daily housekeeping with linen and towel service and fresh floral arrangements.</span></div>
+        </div>
+        <div class="amenity-list-item">
+          <i class="fas fa-baby amenity-list-icon"></i>
+          <div class="amenity-list-text"><strong>Pet-Friendly Suites</strong><span>Select suites are pet-friendly. Please inform us at time of booking.</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- IMAGE BREAK -->
+<div style="display:grid;grid-template-columns:1fr 1fr;height:420px;">
+  <div style="overflow:hidden;">
+    <img src="/images/30-5a5a1a0bb48d42425a8f4bf5dc73f8e2-o.webp" alt="Villa Maris exterior" style="width:100%;height:100%;object-fit:cover;">
+  </div>
+  <div style="overflow:hidden;">
+    <img src="/images/18-697800410cd4a8e747504cbbfc00cebe-o.webp" alt="Soaking tub" style="width:100%;height:100%;object-fit:cover;">
+  </div>
+</div>
+
+<!-- ACTIVITIES TEASER -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Beyond the Estate</span>
+      <h2 class="section-title light">Curated Experiences Await</h2>
+      <div class="gold-divider centered"></div>
+      <p class="section-subtitle light">Villa Maris arranges extraordinary experiences — bay sailing, guided hikes, private chef dinners, wine tours, and more. Ask your concierge for the full curated menu.</p>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="/activities.html" class="btn btn-outline-white">Explore All Experiences</a>
+    </div>
+  </div>
+</section>
+
+<div class="cta-banner">
+  <h2 class="cta-title">Experience Villa Maris for Yourself</h2>
+  <p class="cta-subtitle">Every amenity included. No surprises. Just an extraordinary stay.</p>
+  <div class="cta-buttons">
+    <a href="/reservations.html" class="btn btn-dark">Reserve Now</a>
+    <a href="/rooms.html" class="btn btn-outline-white" style="border-color:rgba(255,255,255,0.5);color:#fff;">View Suites</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Villa Maris</div>
+      <span class="footer-brand-sub">Tiburon · Private Luxury Estate</span>
+      <p>Eight curated suites, panoramic bay views, and a world of curated experiences on the California coast.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="/about.html">About</a></li><li><a href="/rooms.html">Suites</a></li>
+      <li><a href="/amenities.html">Amenities</a></li><li><a href="/activities.html">Experiences</a></li>
+      <li><a href="/dining.html">Dining</a></li><li><a href="/gallery.html">Gallery</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Book</h4><ul>
+      <li><a href="/reservations.html">Reservations</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="#">Cancellation Policy</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4>
+      <p>Tiburon, CA 94920</p>
+      <p style="margin-top:1rem;"><a href="tel:+14155550180" style="color:rgba(245,240,232,0.55);text-decoration:none;">+1 (415) 555-0180</a></p>
+      <p><a href="mailto:stay@villamaristiburon.com" style="color:rgba(245,240,232,0.55);text-decoration:none;">stay@villamaristiburon.com</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Villa Maris Tiburon LLC · All Rights Reserved</div>
+    <div class="footer-social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-pinterest-p"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

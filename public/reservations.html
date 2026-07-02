@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserve Your Suite — Villa Maris Tiburon</title>
+  <meta name="description" content="Book your stay at Villa Maris Tiburon. Eight unique luxury suites from $495/night. Gourmet breakfast included. Private luxury estate in Tiburon, California.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .reservation-hero-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      height: 280px;
+    }
+    .reservation-hero-strip div { overflow: hidden; }
+    .reservation-hero-strip img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .reservation-hero-strip div:hover img { transform: scale(1.05); }
+    .select-styled {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%23b8964e'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .step-num {
+      width: 32px; height: 32px;
+      background: var(--gold);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--navy);
+    }
+    .form-section {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-section:last-of-type { border-bottom: none; }
+    .room-select-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .room-select-card {
+      border: 2px solid #eee;
+      padding: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+    .room-select-card:hover { border-color: var(--gold); }
+    .room-select-card.selected { border-color: var(--gold); background: rgba(184,150,78,0.05); }
+    .room-select-card input[type="radio"] { position: absolute; opacity: 0; }
+    .room-select-card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--navy);
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+    .room-select-card-price {
+      font-size: 0.75rem;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .room-select-card-check {
+      position: absolute;
+      top: 0.75rem; right: 0.75rem;
+      width: 20px; height: 20px;
+      border: 2px solid #ddd;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: #fff;
+      transition: var(--transition);
+    }
+    .room-select-card.selected .room-select-card-check {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .security-badges {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.68rem;
+      color: var(--text-light);
+    }
+    .security-badge i { color: var(--gold); }
+    @media (max-width: 900px) {
+      .reservation-hero-strip { grid-template-columns: 1fr 1fr; height: 200px; }
+      .room-select-cards { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .reservation-hero-strip { grid-template-columns: 1fr 1fr; height: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Villa Maris</span>
+    <span class="nav-logo-sub">Tiburon · Private Luxury Estate</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/rooms.html">Suites</a></li>
+    <li><a href="/amenities.html">Amenities</a></li>
+    <li><a href="/activities.html">Experiences</a></li>
+    <li><a href="/dining.html">Dining</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <a href="/reservations.html" class="nav-book" style="background:var(--navy);">Reservations</a>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="/">Home</a><a href="/about.html">About</a><a href="/rooms.html">Suites</a>
+  <a href="/amenities.html">Amenities</a><a href="/activities.html">Experiences</a>
+  <a href="/dining.html">Dining</a><a href="/gallery.html">Gallery</a>
+  <a href="/contact.html">Contact</a>
+  <a href="/reservations.html" style="color:var(--gold);">Book Now</a>
+</div>
+
+<!-- HERO STRIP -->
+<div style="margin-top:70px;" class="reservation-hero-strip">
+  <div><img src="/images/35-f4062c2fc52b1004f6a95a849ecd9df1-o.webp" alt="Fire pit deck"></div>
+  <div><img src="/images/16-148c5b450b47725874df2c4fc49fdba2-o.webp" alt="Bay view suite"></div>
+  <div><img src="/images/18-697800410cd4a8e747504cbbfc00cebe-o.webp" alt="Soaking tub"></div>
+  <div><img src="/images/40-0781fac87434f55ffb484484bf1682f8-o.webp" alt="Hot tub"></div>
+</div>
+
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span> Reserve Your Suite
+</div>
+
+<!-- RESERVATION SECTION -->
+<div class="reservation-section">
+  <div class="reservation-inner">
+
+    <!-- FORM -->
+    <div>
+      <div style="margin-bottom:2.5rem;">
+        <span class="section-eyebrow">Book Direct & Save</span>
+        <h1 class="section-title" style="font-size:2.5rem;">Reserve Your Suite</h1>
+        <div class="gold-divider"></div>
+        <p style="font-size:0.88rem;color:var(--text-mid);line-height:1.8;font-weight:300;">Book directly for our best rates. All reservations include gourmet breakfast, evening wine service, and full estate access. A 50% deposit is collected at booking; remainder due on arrival.</p>
+      </div>
+
+      <div class="reservation-form" id="reservationFormWrap">
+        <form id="reservationForm" novalidate>
+
+          <!-- STEP 1: STAY DETAILS -->
+          <div class="form-section">
+            <div class="step-header">
+              <div class="step-num">1</div>
+              <div class="step-title">Your Stay</div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="checkin">Check-in Date *</label>
+                <input type="date" id="checkin" name="checkin" required>
+              </div>
+              <div class="form-group">
+                <label for="checkout">Check-out Date *</label>
+                <input type="date" id="checkout" name="checkout" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="guests">Number of Guests *</label>
+                <select id="guests" name="guests" required class="select-styled">
+                  <option value="">Select guests</option>
+                  <option value="1">1 Guest</option>
+                  <option value="2">2 Guests</option>
+                  <option value="3">3 Guests</option>
+                  <option value="4">4 Guests</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="room">Suite Selection *</label>
+                <select id="room" name="room" required class="select-styled">
+                  <option value="">Select a suite</option>
+                  <option value="tiburon-bay-suite">The Tiburon Bay Suite — $695/night</option>
+                  <option value="golden-gate-vista">The Golden Gate Vista — $795/night</option>
+                  <option value="marin-sanctuary">The Marin Sanctuary — $595/night</option>
+                  <option value="alcatraz-suite">The Alcatraz Suite — $650/night</option>
+                  <option value="captains-quarters">The Captain's Quarters — $550/night</option>
+                  <option value="hillside-retreat">The Hillside Retreat — $525/night</option>
+                  <option value="marina-room">The Marina Room — $575/night</option>
+                  <option value="garden-bower">The Garden Bower — $495/night</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: GUEST INFO -->
+          <div class="form-section">
+            <div class="step-header">
+              <div class="step-num">2</div>
+              <div class="step-title">Guest Information</div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First Name *</label>
+                <input type="text" id="firstName" name="firstName" placeholder="First name" required>
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name *</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Last name" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" name="email" placeholder="your@email.com" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="+1 (415) 000-0000">
+              </div>
+              <div class="form-group">
+                <label for="country">Country of Residence</label>
+                <select id="country" name="country" class="select-styled">
+                  <option value="US">United States</option>
+                  <option value="CA">Canada</option>
+                  <option value="GB">United Kingdom</option>
+                  <option value="AU">Australia</option>
+                  <option value="FR">France</option>
+                  <option value="DE">Germany</option>
+                  <option value="JP">Japan</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="specialRequests">Special Requests or Occasion</label>
+              <textarea id="specialRequests" name="specialRequests" placeholder="Anniversary, dietary needs, early check-in, specific room preferences, celebration arrangements..."></textarea>
+            </div>
+          </div>
+
+          <!-- STEP 3: ADD-ONS -->
+          <div class="form-section">
+            <div class="step-header">
+              <div class="step-num">3</div>
+              <div class="step-title">Enhance Your Stay</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              <label style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;font-size:0.85rem;color:var(--text-mid);">
+                <input type="checkbox" name="addons" value="sail" style="accent-color:var(--gold);width:16px;height:16px;">
+                <span><strong style="color:var(--text-dark);">Bay Sailboat Charter</strong> — Private 3hr sail with captain. +$395</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;font-size:0.85rem;color:var(--text-mid);">
+                <input type="checkbox" name="addons" value="massage" style="accent-color:var(--gold);width:16px;height:16px;">
+                <span><strong style="color:var(--text-dark);">In-Suite Massage (60 min)</strong> — Licensed therapist in your suite. +$165/person</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;font-size:0.85rem;color:var(--text-mid);">
+                <input type="checkbox" name="addons" value="wine" style="accent-color:var(--gold);width:16px;height:16px;">
+                <span><strong style="color:var(--text-dark);">Champagne & Flowers Welcome</strong> — Arrival champagne + seasonal arrangement. +$95</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;font-size:0.85rem;color:var(--text-mid);">
+                <input type="checkbox" name="addons" value="hike" style="accent-color:var(--gold);width:16px;height:16px;">
+                <span><strong style="color:var(--text-dark);">Guided Ring Mountain Hike</strong> — Half-day with our guide. +$85/person</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;font-size:0.85rem;color:var(--text-mid);">
+                <input type="checkbox" name="addons" value="dinner" style="accent-color:var(--gold);width:16px;height:16px;">
+                <span><strong style="color:var(--text-dark);">Private Chef's Table Dinner</strong> — 5-course tasting menu for 2. +$295</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- STEP 4: PAYMENT -->
+          <div class="form-section">
+            <div class="step-header">
+              <div class="step-num">4</div>
+              <div class="step-title">Payment Details</div>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-mid);margin-bottom:1.5rem;line-height:1.7;">A 50% deposit is required to confirm your reservation. The remaining balance is due upon check-in. All transactions are processed securely. We accept all major credit cards.</p>
+            <div class="card-icons">
+              <span class="card-icon">VISA</span>
+              <span class="card-icon">MC</span>
+              <span class="card-icon">AMEX</span>
+              <span class="card-icon">DISC</span>
+            </div>
+            <div class="form-group">
+              <label for="cardName">Name on Card *</label>
+              <input type="text" id="cardName" name="cardName" placeholder="Full name as it appears on card" required>
+            </div>
+            <div class="form-group">
+              <label for="cardNumber">Card Number *</label>
+              <input type="text" id="cardNumber" name="cardNumber" placeholder="•••• •••• •••• ••••" maxlength="19" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cardExpiry">Expiration Date *</label>
+                <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM / YY" maxlength="7" required>
+              </div>
+              <div class="form-group">
+                <label for="cardCvv">Security Code *</label>
+                <input type="text" id="cardCvv" name="cardCvv" placeholder="CVV" maxlength="4" required>
+              </div>
+            </div>
+            <div class="security-badges">
+              <div class="security-badge"><i class="fas fa-lock"></i> 256-bit SSL Encryption</div>
+              <div class="security-badge"><i class="fas fa-shield-alt"></i> PCI Compliant</div>
+              <div class="security-badge"><i class="fas fa-check-circle"></i> Secure Checkout</div>
+            </div>
+          </div>
+
+          <!-- POLICIES -->
+          <div style="background:var(--cream);padding:1.5rem;border-left:3px solid var(--gold);margin-bottom:1.5rem;font-size:0.78rem;color:var(--text-mid);line-height:1.7;">
+            <strong style="color:var(--text-dark);display:block;margin-bottom:0.5rem;">Cancellation & Booking Policy</strong>
+            Free cancellation up to 14 days before check-in. Cancellations within 14 days are non-refundable. 2-night minimum on weekends. Prices exclude applicable California state taxes (12%). By submitting, you agree to our Terms of Service and Privacy Policy.
+          </div>
+
+          <div class="form-group">
+            <label style="display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;font-size:0.8rem;color:var(--text-mid);">
+              <input type="checkbox" name="agreeTerms" required style="accent-color:var(--gold);width:16px;height:16px;margin-top:2px;flex-shrink:0;">
+              <span>I agree to Villa Maris Tiburon's Terms of Service, Cancellation Policy, and Privacy Policy. I confirm that the information provided is accurate and I am authorized to use the payment method listed.</span>
+            </label>
+          </div>
+
+          <button type="submit" class="form-submit" id="submitBtn">
+            <i class="fas fa-lock" style="margin-right:0.5rem;font-size:0.75rem;"></i>
+            Complete Reservation
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="reservation-sidebar">
+      <div class="sidebar-card">
+        <h3><i class="fas fa-calculator" style="color:var(--gold);margin-right:0.5rem;font-size:1rem;"></i> Rate Summary</h3>
+        <div class="price-summary">
+          <div class="price-row">
+            <span>Suite</span>
+            <span id="roomPriceDisplay" style="color:var(--text-mid);">Select a suite</span>
+          </div>
+          <div class="price-row">
+            <span>Stay</span>
+            <span id="nightsDisplay" style="color:var(--text-mid);">—</span>
+          </div>
+          <div class="price-row">
+            <span>CA State Tax (12%)</span>
+            <span id="taxDisplay">—</span>
+          </div>
+          <div class="price-row total">
+            <span>Estimated Total</span>
+            <span id="totalPrice" style="color:var(--navy);">—</span>
+          </div>
+        </div>
+        <p style="font-size:0.72rem;color:var(--text-light);margin-top:1rem;line-height:1.6;">50% deposit due at booking. Balance collected at check-in. Add-ons billed separately at arrival.</p>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>What's Included</h3>
+        <div class="policy-items">
+          <div class="policy-item">
+            <div class="policy-icon"><i class="fas fa-egg"></i></div>
+            <div class="policy-text">
+              <strong>Daily Gourmet Breakfast</strong>
+              Farm-to-table morning meal by our estate chef — included with all stays.
+            </div>
+          </div>
+          <div class="policy-item">
+            <div class="policy-icon"><i class="fas fa-wine-glass"></i></div>
+            <div class="policy-text">
+              <strong>Evening Wine & Cheese</strong>
+              California wine, artisan charcuterie, and local cheeses each evening.
+            </div>
+          </div>
+          <div class="policy-item">
+            <div class="policy-icon"><i class="fas fa-hot-tub"></i></div>
+            <div class="policy-text">
+              <strong>Full Estate Access</strong>
+              Bay-view hot tub, fire pit deck, yoga deck, gardens, and all common areas.
+            </div>
+          </div>
+          <div class="policy-item">
+            <div class="policy-icon"><i class="fas fa-wifi"></i></div>
+            <div class="policy-text">
+              <strong>High-Speed WiFi & Parking</strong>
+              Fiber internet and complimentary parking throughout your stay.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Policies</h3>
+        <div class="policy-items">
+          <div class="policy-item">
+            <div class="policy-icon"><i class="fas fa-clock"></i></div>
+            <div class="policy-text">
+              <strong>Check-in / Check-out</strong>
+              Check-in from 3:00 PM. Check-out by 11:00 AM. Early/late by arrangement.
+            </div>
+          </div>
+          <div class="policy-item">
+            <div class="policy-icon"><i class="fas fa-ban"></i></div>
+            <div class="policy-text">
+              <strong>Cancellation</strong>
+              Free cancellation up to 14 days prior. Non-refundable within 14 days.
+            </div>
+          </div>
+          <div class="policy-item">
+            <div class="policy-icon"><i class="fas fa-moon"></i></div>
+            <div class="policy-text">
+              <strong>Minimum Stay</strong>
+              2-night minimum on weekends and holidays. 1-night available weekdays.
+            </div>
+          </div>
+          <div class="policy-item">
+            <div class="policy-icon"><i class="fas fa-paw"></i></div>
+            <div class="policy-text">
+              <strong>Pets Welcome</strong>
+              Select pet-friendly suites available. Please note at time of booking.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--cream);padding:2rem;border:1px solid var(--border);">
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--navy);margin-bottom:1rem;">Prefer to Book by Phone?</h3>
+        <p style="font-size:0.82rem;color:var(--text-mid);line-height:1.7;margin-bottom:1rem;">Our team is available 9am–7pm daily. We're happy to assist with special arrangements, group bookings, or exclusive-use inquiries.</p>
+        <a href="tel:+14155550180" style="display:flex;align-items:center;gap:0.5rem;font-size:0.9rem;font-weight:600;color:var(--navy);text-decoration:none;">
+          <i class="fas fa-phone" style="color:var(--gold);"></i>
+          +1 (415) 555-0180
+        </a>
+        <a href="mailto:stay@villamaristiburon.com" style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--text-mid);text-decoration:none;margin-top:0.5rem;">
+          <i class="fas fa-envelope" style="color:var(--gold);"></i>
+          stay@villamaristiburon.com
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon"><i class="fas fa-check"></i></div>
+    <h2 class="success-title">Reservation Received</h2>
+    <p class="success-text">Thank you for choosing Villa Maris Tiburon. Your reservation request has been received and is being confirmed by our team.</p>
+    <p class="success-text" style="margin-top:0.5rem;">A confirmation email will be sent to the address provided within 30 minutes. If you have questions, please call us at +1 (415) 555-0180.</p>
+    <p class="success-conf" id="confirmationNumber">Confirmation #: —</p>
+    <button class="btn btn-primary" id="successClose" style="width:100%;justify-content:center;">Return to Home</button>
+  </div>
+</div>
+
+<!-- IMAGE TEASER -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);height:300px;margin-top:4rem;">
+  <div style="overflow:hidden;"><img src="/images/1-ac2243c6516e2d39c4d30877e9423ccf-o.webp" alt="Living room" style="width:100%;height:100%;object-fit:cover;"></div>
+  <div style="overflow:hidden;"><img src="/images/30-5a5a1a0bb48d42425a8f4bf5dc73f8e2-o.webp" alt="Exterior" style="width:100%;height:100%;object-fit:cover;"></div>
+  <div style="overflow:hidden;"><img src="/images/3-6fdfabae155055c8a1467f7e860dd9bd-o.webp" alt="Deck" style="width:100%;height:100%;object-fit:cover;"></div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Villa Maris</div>
+      <span class="footer-brand-sub">Tiburon · Private Luxury Estate</span>
+      <p>Eight curated suites, panoramic bay views, and extraordinary experiences in Tiburon, California.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="/about.html">About</a></li><li><a href="/rooms.html">Suites</a></li>
+      <li><a href="/amenities.html">Amenities</a></li><li><a href="/activities.html">Experiences</a></li>
+      <li><a href="/dining.html">Dining</a></li><li><a href="/gallery.html">Gallery</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Book</h4><ul>
+      <li><a href="/reservations.html">Reservations</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="#">Cancellation Policy</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4>
+      <p>Tiburon, CA 94920</p>
+      <p style="margin-top:1rem;"><a href="tel:+14155550180" style="color:rgba(245,240,232,0.55);text-decoration:none;">+1 (415) 555-0180</a></p>
+      <p><a href="mailto:stay@villamaristiburon.com" style="color:rgba(245,240,232,0.55);text-decoration:none;">stay@villamaristiburon.com</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Villa Maris Tiburon LLC · All Rights Reserved</div>
+    <div class="footer-social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-pinterest-p"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  // Card number formatting
+  const cardNum = document.getElementById('cardNumber');
+  if (cardNum) {
+    cardNum.addEventListener('input', function() {
+      let val = this.value.replace(/\D/g, '').substring(0, 16);
+      this.value = val.replace(/(.{4})/g, '$1 ').trim();
+    });
+  }
+  const cardExp = document.getElementById('cardExpiry');
+  if (cardExp) {
+    cardExp.addEventListener('input', function() {
+      let val = this.value.replace(/\D/g, '').substring(0, 4);
+      if (val.length >= 2) val = val.substring(0,2) + ' / ' + val.substring(2);
+      this.value = val;
+    });
+  }
+  // Pre-select room from URL
+  const params = new URLSearchParams(window.location.search);
+  const roomParam = params.get('room');
+  if (roomParam) {
+    const roomSel = document.getElementById('room');
+    if (roomSel) roomSel.value = roomParam;
+    setTimeout(() => {
+      const event = new Event('change');
+      roomSel.dispatchEvent(event);
+    }, 100);
+  }
+</script>
+</body>
+</html>

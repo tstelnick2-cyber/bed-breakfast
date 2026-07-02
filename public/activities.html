@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experiences & Activities — Villa Maris Tiburon</title>
+  <meta name="description" content="Bay sailing, sunrise yoga, Ring Mountain hikes, wine tours, kayaking, and more — curated experiences from Villa Maris Tiburon.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .exp-hero-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 0.5rem;
+      height: 580px;
+    }
+    .exp-hero-grid div {
+      overflow: hidden;
+    }
+    .exp-hero-grid div:first-child {
+      grid-row: span 2;
+    }
+    .exp-hero-grid img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .exp-hero-grid div:hover img { transform: scale(1.04); }
+    .exp-full-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4rem;
+    }
+    .exp-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .exp-item:last-child { border-bottom: none; }
+    .exp-item.reverse { direction: rtl; }
+    .exp-item.reverse > * { direction: ltr; }
+    .exp-item-image {
+      position: relative;
+      overflow: hidden;
+      height: 380px;
+    }
+    .exp-item-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .exp-item:hover .exp-item-image img { transform: scale(1.04); }
+    .exp-label {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .exp-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .exp-desc {
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      line-height: 1.9;
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+    }
+    .exp-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .exp-detail-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      color: var(--text-mid);
+      background: var(--cream);
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--border);
+    }
+    .exp-detail-tag i { color: var(--gold); font-size: 0.7rem; }
+    .quick-activities {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .quick-activity-card {
+      text-align: center;
+      padding: 2rem 1rem;
+      border: 1px solid rgba(184,150,78,0.15);
+      transition: var(--transition);
+    }
+    .quick-activity-card:hover {
+      background: rgba(184,150,78,0.07);
+      border-color: rgba(184,150,78,0.3);
+      transform: translateY(-3px);
+    }
+    .quick-activity-icon { font-size: 1.8rem; color: var(--gold); margin-bottom: 1rem; }
+    .quick-activity-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--cream); margin-bottom: 0.4rem; }
+    .quick-activity-note { font-size: 0.72rem; color: rgba(245,240,232,0.5); line-height: 1.5; }
+    @media (max-width: 900px) {
+      .exp-item, .exp-item.reverse { grid-template-columns: 1fr; direction: ltr; gap: 2rem; }
+      .exp-hero-grid { grid-template-columns: 1fr; height: auto; }
+      .exp-hero-grid div:first-child { grid-row: auto; }
+      .exp-hero-grid img { height: 240px; }
+      .quick-activities { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .quick-activities { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Villa Maris</span>
+    <span class="nav-logo-sub">Tiburon · Private Luxury Estate</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/rooms.html">Suites</a></li>
+    <li><a href="/amenities.html">Amenities</a></li>
+    <li><a href="/activities.html" class="active">Experiences</a></li>
+    <li><a href="/dining.html">Dining</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <a href="/reservations.html" class="nav-book">Book Now</a>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="/">Home</a><a href="/about.html">About</a><a href="/rooms.html">Suites</a>
+  <a href="/amenities.html">Amenities</a><a href="/activities.html">Experiences</a>
+  <a href="/dining.html">Dining</a><a href="/gallery.html">Gallery</a>
+  <a href="/contact.html">Contact</a>
+  <a href="/reservations.html" style="color:var(--gold);">Book Now</a>
+</div>
+
+<div class="page-hero" style="background-image: url('/images/50-e797dc48caf532344fec95bfdac49258-o.webp');">
+  <div class="page-hero-content">
+    <span class="page-hero-eyebrow">Curated Experiences</span>
+    <h1 class="page-hero-title">The Bay Is<br>Your Playground</h1>
+  </div>
+</div>
+
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span> Experiences &amp; Activities
+</div>
+
+<!-- INTRO -->
+<section class="section" style="padding-bottom:2rem;">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Signature Experiences</span>
+      <h2 class="section-title">Adventures on Water & Land</h2>
+      <div class="gold-divider centered"></div>
+      <p class="section-subtitle">Every experience at Villa Maris is curated to put you in deeper relationship with this extraordinary corner of California. Our concierge arranges everything — you simply say yes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- IMAGE GRID -->
+<div style="padding:0 4rem;max-width:1300px;margin:0 auto 4rem;" class="reveal">
+  <div class="exp-hero-grid">
+    <div><img src="/images/45-42ed3059b7ecf26838be76a595089e3a-o.webp" alt="Bay views from Tiburon"></div>
+    <div><img src="/images/4-061f060b94c4c4bab2d96e2ae411b4f9-o.webp" alt="Aerial Tiburon sunset"></div>
+    <div><img src="/images/5-01c79744302a13aec7a709f0d9fd08e5-o.webp" alt="SF skyline night view"></div>
+  </div>
+</div>
+
+<!-- EXPERIENCES LIST -->
+<section class="section" style="padding-top:0;">
+  <div class="section-inner">
+    <div class="exp-full-list">
+
+      <!-- SAILING -->
+      <div class="exp-item reveal">
+        <div class="exp-item-image">
+          <img src="/images/50-e797dc48caf532344fec95bfdac49258-o.webp" alt="Bay sailing from Tiburon">
+        </div>
+        <div>
+          <span class="exp-label">On the Water</span>
+          <h2 class="exp-title">Private Bay Sailboat Charter</h2>
+          <p class="exp-desc">There is nothing quite like arriving at the Golden Gate by sail. Our certified captain takes guests on private sailboat excursions across Richardson Bay — morning voyages around Angel Island, afternoon sails toward the bridge, or golden-hour drifts as the city lights up across the water. Beverages and light bites provided aboard.</p>
+          <div class="exp-details">
+            <span class="exp-detail-tag"><i class="fas fa-clock"></i> 2–4 hours</span>
+            <span class="exp-detail-tag"><i class="fas fa-users"></i> Up to 6 guests</span>
+            <span class="exp-detail-tag"><i class="fas fa-calendar"></i> Year-round</span>
+            <span class="exp-detail-tag"><i class="fas fa-dollar-sign"></i> From $395/charter</span>
+          </div>
+          <a href="/contact.html" class="btn btn-primary">Arrange This Experience</a>
+        </div>
+      </div>
+
+      <!-- YOGA -->
+      <div class="exp-item reverse reveal">
+        <div class="exp-item-image">
+          <img src="/images/35-f4062c2fc52b1004f6a95a849ecd9df1-o.webp" alt="Yoga deck with bay view">
+        </div>
+        <div>
+          <span class="exp-label">Wellness</span>
+          <h2 class="exp-title">Sunrise Yoga on the Bay Deck</h2>
+          <p class="exp-desc">Each morning, as the bay awakens below and the first light catches Mount Tamalpais, our resident yoga instructor leads an hour-long flow session on our dedicated view deck. Vinyasa, restorative, and gentle practices available. All levels welcome. Mats, blocks, and straps provided. Meditation sessions available separately at dawn.</p>
+          <div class="exp-details">
+            <span class="exp-detail-tag"><i class="fas fa-clock"></i> 60–75 minutes</span>
+            <span class="exp-detail-tag"><i class="fas fa-calendar"></i> Daily at sunrise</span>
+            <span class="exp-detail-tag"><i class="fas fa-user-friends"></i> Up to 8 guests</span>
+            <span class="exp-detail-tag"><i class="fas fa-tag"></i> Complimentary</span>
+          </div>
+          <a href="/contact.html" class="btn btn-primary">Reserve Your Spot</a>
+        </div>
+      </div>
+
+      <!-- HIKING -->
+      <div class="exp-item reveal">
+        <div class="exp-item-image">
+          <img src="/images/45-42ed3059b7ecf26838be76a595089e3a-o.webp" alt="Tiburon hillside views">
+        </div>
+        <div>
+          <span class="exp-label">Nature</span>
+          <h2 class="exp-title">Ring Mountain & Mt. Tamalpais Hikes</h2>
+          <p class="exp-desc">Marin County's trail system is world-class, and Villa Maris sits at its threshold. Our guide Simone leads guests on morning hikes up Ring Mountain — a 2,600-acre preserve with rare serpentine wildflowers and sweeping bay panoramas — as well as half-day treks up Mt. Tamalpais with its storied views of seven counties. Trail lunch provided.</p>
+          <div class="exp-details">
+            <span class="exp-detail-tag"><i class="fas fa-clock"></i> 2.5–5 hours</span>
+            <span class="exp-detail-tag"><i class="fas fa-shoe-prints"></i> Moderate difficulty</span>
+            <span class="exp-detail-tag"><i class="fas fa-users"></i> 1–6 guests</span>
+            <span class="exp-detail-tag"><i class="fas fa-dollar-sign"></i> From $85/person</span>
+          </div>
+          <a href="/contact.html" class="btn btn-primary">Book a Guided Hike</a>
+        </div>
+      </div>
+
+      <!-- KAYAKING -->
+      <div class="exp-item reverse reveal">
+        <div class="exp-item-image">
+          <img src="/images/3-6fdfabae155055c8a1467f7e860dd9bd-o.webp" alt="Bay view from deck">
+        </div>
+        <div>
+          <span class="exp-label">On the Water</span>
+          <h2 class="exp-title">Sea Kayaking & Paddleboarding</h2>
+          <p class="exp-desc">Launch from Tiburon's waterfront and paddle out into the glassy waters of Richardson Bay. Explore the hidden coves of Belvedere, drift past the Corinthian Yacht Club, or paddle all the way to Angel Island for a mid-morning shore break. Equipment and guides provided. Beginners and experienced paddlers equally welcome.</p>
+          <div class="exp-details">
+            <span class="exp-detail-tag"><i class="fas fa-clock"></i> 1.5–3 hours</span>
+            <span class="exp-detail-tag"><i class="fas fa-water"></i> Calm bay waters</span>
+            <span class="exp-detail-tag"><i class="fas fa-users"></i> Up to 4 guests</span>
+            <span class="exp-detail-tag"><i class="fas fa-dollar-sign"></i> From $75/person</span>
+          </div>
+          <a href="/contact.html" class="btn btn-primary">Arrange This Experience</a>
+        </div>
+      </div>
+
+      <!-- WINE -->
+      <div class="exp-item reveal">
+        <div class="exp-item-image">
+          <img src="/images/9-17dd6bedc702104dc8db9981041972cf-o.webp" alt="Wine cellar">
+        </div>
+        <div>
+          <span class="exp-label">Culinary</span>
+          <h2 class="exp-title">Marin & Napa Wine Tours</h2>
+          <p class="exp-desc">Marin County is home to a new generation of boutique wineries crafting world-class Pinot Noir and Chardonnay from cool coastal fog. Our concierge arranges private tastings at select Marin and Napa estates — chauffeured, unhurried, and entirely curated to your palate. Full-day Napa Valley tours also available.</p>
+          <div class="exp-details">
+            <span class="exp-detail-tag"><i class="fas fa-clock"></i> Half or full day</span>
+            <span class="exp-detail-tag"><i class="fas fa-car"></i> Chauffeured</span>
+            <span class="exp-detail-tag"><i class="fas fa-wine-glass"></i> 3–4 tastings</span>
+            <span class="exp-detail-tag"><i class="fas fa-dollar-sign"></i> From $250/person</span>
+          </div>
+          <a href="/contact.html" class="btn btn-primary">Plan Your Wine Day</a>
+        </div>
+      </div>
+
+      <!-- SF DAY TRIP -->
+      <div class="exp-item reverse reveal">
+        <div class="exp-item-image">
+          <img src="/images/5-01c79744302a13aec7a709f0d9fd08e5-o.webp" alt="San Francisco skyline at night">
+        </div>
+        <div>
+          <span class="exp-label">Day Trips</span>
+          <h2 class="exp-title">San Francisco by Ferry</h2>
+          <p class="exp-desc">One of the great hidden pleasures of a Tiburon stay: hopping the Golden Gate Ferry for a 20-minute crossing to the Ferry Building, then spending the day in one of the world's great cities — before returning by water as the sun sets behind the Golden Gate. Our concierge arranges curated SF itineraries including art, food, and neighborhood walks.</p>
+          <div class="exp-details">
+            <span class="exp-detail-tag"><i class="fas fa-ship"></i> 20-min ferry</span>
+            <span class="exp-detail-tag"><i class="fas fa-clock"></i> Full day option</span>
+            <span class="exp-detail-tag"><i class="fas fa-map"></i> Curated itineraries</span>
+            <span class="exp-detail-tag"><i class="fas fa-shuttle-van"></i> Shuttle to ferry</span>
+          </div>
+          <a href="/contact.html" class="btn btn-primary">Plan Your SF Day</a>
+        </div>
+      </div>
+
+      <!-- BIRDING / NATURE -->
+      <div class="exp-item reveal">
+        <div class="exp-item-image">
+          <img src="/images/4-061f060b94c4c4bab2d96e2ae411b4f9-o.webp" alt="Tiburon aerial sunset view">
+        </div>
+        <div>
+          <span class="exp-label">Nature & Wildlife</span>
+          <h2 class="exp-title">Angel Island Excursion</h2>
+          <p class="exp-desc">California's Ellis Island sits just a ferry ride away — a 740-acre jewel in the bay with panoramic views from its peak of all nine Bay Area counties. Hike its historic trails, discover the immigrant detention history, or simply picnic on a hillside as container ships drift past. Villa Maris arranges private guided tours and packed estate lunches for the journey.</p>
+          <div class="exp-details">
+            <span class="exp-detail-tag"><i class="fas fa-clock"></i> Half or full day</span>
+            <span class="exp-detail-tag"><i class="fas fa-ship"></i> Ferry access</span>
+            <span class="exp-detail-tag"><i class="fas fa-hiking"></i> Guided option</span>
+            <span class="exp-detail-tag"><i class="fas fa-utensils"></i> Estate lunch included</span>
+          </div>
+          <a href="/contact.html" class="btn btn-primary">Arrange This Trip</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- NEARBY -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Also Nearby</span>
+      <h2 class="section-title light">More to Discover in Tiburon & Marin</h2>
+      <div class="gold-divider centered"></div>
+    </div>
+    <div class="quick-activities" style="margin-top:3rem;">
+      <div class="quick-activity-card reveal">
+        <div class="quick-activity-icon"><i class="fas fa-fish"></i></div>
+        <div class="quick-activity-name">Deep-Sea Fishing</div>
+        <div class="quick-activity-note">Charter fishing trips into the Bay and Pacific. Salmon, halibut, and striped bass season.</div>
+      </div>
+      <div class="quick-activity-card reveal reveal-delay-1">
+        <div class="quick-activity-icon"><i class="fas fa-bicycle"></i></div>
+        <div class="quick-activity-name">Cycling the Marin Headlands</div>
+        <div class="quick-activity-note">Road and trail cycling through some of California's most dramatic coastal landscape.</div>
+      </div>
+      <div class="quick-activity-card reveal reveal-delay-2">
+        <div class="quick-activity-icon"><i class="fas fa-camera"></i></div>
+        <div class="quick-activity-name">Photography Tours</div>
+        <div class="quick-activity-note">Golden Gate, Marin headlands, and bay photography sessions with a professional guide.</div>
+      </div>
+      <div class="quick-activity-card reveal reveal-delay-3">
+        <div class="quick-activity-icon"><i class="fas fa-store"></i></div>
+        <div class="quick-activity-name">Tiburon Village</div>
+        <div class="quick-activity-note">A charming waterfront village with boutiques, restaurants, and the historic Ark Row shops.</div>
+      </div>
+      <div class="quick-activity-card reveal">
+        <div class="quick-activity-icon"><i class="fas fa-theater-masks"></i></div>
+        <div class="quick-activity-name">Marin Arts & Culture</div>
+        <div class="quick-activity-note">The San Francisco Symphony, Ballet, and world-class museums are 20 minutes away by ferry.</div>
+      </div>
+      <div class="quick-activity-card reveal reveal-delay-1">
+        <div class="quick-activity-icon"><i class="fas fa-golf-ball"></i></div>
+        <div class="quick-activity-name">Golf at Peacock Gap</div>
+        <div class="quick-activity-note">18-hole bayfront golf course minutes from the estate. Club rentals and tee times arranged.</div>
+      </div>
+      <div class="quick-activity-card reveal reveal-delay-2">
+        <div class="quick-activity-icon"><i class="fas fa-moon"></i></div>
+        <div class="quick-activity-name">Evening Bay Cruise</div>
+        <div class="quick-activity-note">Private sunset cocktail cruises on the bay — the city at its most golden and the bridge at its most magnificent.</div>
+      </div>
+      <div class="quick-activity-card reveal reveal-delay-3">
+        <div class="quick-activity-icon"><i class="fas fa-hand-holding-heart"></i></div>
+        <div class="quick-activity-name">In-Suite Spa Services</div>
+        <div class="quick-activity-note">Licensed massage therapists, facials, and wellness treatments arranged in your suite or on the deck.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-banner">
+  <h2 class="cta-title">Let Us Curate Your Perfect Stay</h2>
+  <p class="cta-subtitle">Contact our concierge team to plan a fully customized itinerary from arrival to departure.</p>
+  <div class="cta-buttons">
+    <a href="/reservations.html" class="btn btn-dark">Reserve a Suite</a>
+    <a href="/contact.html" class="btn btn-outline-white" style="border-color:rgba(255,255,255,0.5);color:#fff;">Contact Concierge</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Villa Maris</div>
+      <span class="footer-brand-sub">Tiburon · Private Luxury Estate</span>
+      <p>Eight curated suites, panoramic bay views, and a world of curated experiences on the California coast.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="/about.html">About</a></li><li><a href="/rooms.html">Suites</a></li>
+      <li><a href="/amenities.html">Amenities</a></li><li><a href="/activities.html">Experiences</a></li>
+      <li><a href="/dining.html">Dining</a></li><li><a href="/gallery.html">Gallery</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Book</h4><ul>
+      <li><a href="/reservations.html">Reservations</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4>
+      <p>Tiburon, CA 94920</p>
+      <p style="margin-top:1rem;"><a href="tel:+14155550180" style="color:rgba(245,240,232,0.55);text-decoration:none;">+1 (415) 555-0180</a></p>
+      <p><a href="mailto:stay@villamaristiburon.com" style="color:rgba(245,240,232,0.55);text-decoration:none;">stay@villamaristiburon.com</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Villa Maris Tiburon LLC · All Rights Reserved</div>
+    <div class="footer-social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-pinterest-p"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

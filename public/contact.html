@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Villa Maris Tiburon</title>
+  <meta name="description" content="Contact Villa Maris Tiburon — our team is available for reservations, inquiries, and private estate bookings. Located in Tiburon, Marin County, California.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .map-placeholder {
+      background: var(--navy);
+      height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .map-placeholder img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.4;
+    }
+    .map-overlay-card {
+      position: absolute;
+      background: #fff;
+      padding: 2rem;
+      min-width: 260px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    .map-overlay-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .map-overlay-card p {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+    }
+    .map-pin {
+      width: 40px; height: 40px;
+      background: var(--gold);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .map-pin i {
+      color: #fff;
+      font-size: 1rem;
+      transform: rotate(45deg);
+    }
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-question {
+      padding: 1.5rem 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      color: var(--navy);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      transition: var(--transition);
+    }
+    .faq-question:hover { color: var(--gold); }
+    .faq-question i {
+      color: var(--gold);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .faq-answer p {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      line-height: 1.85;
+      padding-bottom: 1.5rem;
+      font-weight: 300;
+    }
+    .faq-item.open .faq-question i { transform: rotate(180deg); }
+    .faq-item.open .faq-answer { max-height: 300px; }
+    .directions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .direction-card {
+      padding: 2rem;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+    .direction-card h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .direction-card h4 i { color: var(--gold); font-size: 0.9rem; }
+    .direction-card p {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+    @media (max-width: 900px) {
+      .directions-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Villa Maris</span>
+    <span class="nav-logo-sub">Tiburon · Private Luxury Estate</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/rooms.html">Suites</a></li>
+    <li><a href="/amenities.html">Amenities</a></li>
+    <li><a href="/activities.html">Experiences</a></li>
+    <li><a href="/dining.html">Dining</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/contact.html" class="active">Contact</a></li>
+  </ul>
+  <a href="/reservations.html" class="nav-book">Book Now</a>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="/">Home</a><a href="/about.html">About</a><a href="/rooms.html">Suites</a>
+  <a href="/amenities.html">Amenities</a><a href="/activities.html">Experiences</a>
+  <a href="/dining.html">Dining</a><a href="/gallery.html">Gallery</a>
+  <a href="/contact.html">Contact</a>
+  <a href="/reservations.html" style="color:var(--gold);">Book Now</a>
+</div>
+
+<div class="page-hero" style="background-image: url('/images/5-01c79744302a13aec7a709f0d9fd08e5-o.webp');">
+  <div class="page-hero-content">
+    <span class="page-hero-eyebrow">Get in Touch</span>
+    <h1 class="page-hero-title">We'd Love to<br>Hear From You</h1>
+  </div>
+</div>
+
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span> Contact Us
+</div>
+
+<!-- MAIN CONTACT -->
+<section class="section">
+  <div class="section-inner">
+    <div class="contact-grid">
+      <!-- FORM -->
+      <div>
+        <span class="section-eyebrow">Send a Message</span>
+        <h2 class="section-title">Let's Plan Your Stay</h2>
+        <div class="gold-divider"></div>
+        <p style="font-size:0.9rem;color:var(--text-mid);line-height:1.8;margin-bottom:2.5rem;font-weight:300;">Whether you're planning your first visit, a return trip, or a private event, our team is here to help. We typically respond within a few hours during business hours.</p>
+
+        <div class="contact-form-wrap">
+          <form id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" placeholder="Your full name" required>
+              </div>
+              <div class="form-group">
+                <label for="contactEmail">Email Address *</label>
+                <input type="email" id="contactEmail" name="email" placeholder="your@email.com" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contactPhone">Phone Number</label>
+                <input type="tel" id="contactPhone" name="phone" placeholder="+1 (415) 000-0000">
+              </div>
+              <div class="form-group">
+                <label for="subject">Topic *</label>
+                <select id="subject" name="subject" required style="width:100%;padding:0.9rem 1rem;border:1px solid #ddd;background:#fff;font-family:'Montserrat',sans-serif;font-size:0.85rem;outline:none;appearance:none;">
+                  <option value="">Select a topic</option>
+                  <option value="reservation">Reservation Inquiry</option>
+                  <option value="availability">Availability Check</option>
+                  <option value="wedding">Wedding / Private Event</option>
+                  <option value="corporate">Corporate Retreat</option>
+                  <option value="exclusive-use">Exclusive Estate Use</option>
+                  <option value="experiences">Activity & Experience Planning</option>
+                  <option value="dining">Private Dining Request</option>
+                  <option value="general">General Question</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="arrivalDate">Planned Arrival</label>
+                <input type="date" id="arrivalDate" name="arrivalDate">
+              </div>
+              <div class="form-group">
+                <label for="departureDate">Planned Departure</label>
+                <input type="date" id="departureDate" name="departureDate">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="message">Your Message *</label>
+              <textarea id="message" name="message" placeholder="Tell us about your stay — suite preferences, group size, special occasions, or any questions we can help with..." style="min-height:140px;" required></textarea>
+            </div>
+            <div class="form-group">
+              <label style="display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;font-size:0.78rem;color:var(--text-mid);">
+                <input type="checkbox" name="newsletter" style="accent-color:var(--gold);width:16px;height:16px;margin-top:2px;flex-shrink:0;">
+                <span>I'd like to receive occasional updates about Villa Maris — seasonal offers, exclusive packages, and estate news. (Optional)</span>
+              </label>
+            </div>
+            <button type="submit" class="form-submit">
+              <i class="fas fa-paper-plane" style="margin-right:0.5rem;font-size:0.75rem;"></i>
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- CONTACT INFO -->
+      <div>
+        <span class="section-eyebrow">Contact Information</span>
+        <h2 class="section-title">Reach Our Team</h2>
+        <div class="gold-divider"></div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="fas fa-phone"></i></div>
+          <div>
+            <div class="contact-info-label">Phone</div>
+            <div class="contact-info-value">
+              <a href="tel:+14155550180" style="color:var(--text-dark);text-decoration:none;font-weight:500;">+1 (415) 555-0180</a><br>
+              <span style="font-size:0.78rem;color:var(--text-light);">Available daily 9:00 AM – 7:00 PM PT</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="fas fa-envelope"></i></div>
+          <div>
+            <div class="contact-info-label">Email</div>
+            <div class="contact-info-value">
+              <a href="mailto:stay@villamaristiburon.com" style="color:var(--text-dark);text-decoration:none;font-weight:500;">stay@villamaristiburon.com</a><br>
+              <span style="font-size:0.78rem;color:var(--text-light);">We respond within 4 hours during business hours</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div>
+            <div class="contact-info-label">Location</div>
+            <div class="contact-info-value">
+              Tiburon, Marin County<br>
+              California 94920<br>
+              <span style="font-size:0.78rem;color:var(--text-light);">Exact address provided upon confirmed reservation</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="fas fa-globe"></i></div>
+          <div>
+            <div class="contact-info-label">Website</div>
+            <div class="contact-info-value">
+              villamaristiburon.com<br>
+              <span style="font-size:0.78rem;color:var(--text-light);">Book direct for best rates</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <div class="contact-info-label">Check-in / Check-out</div>
+            <div class="contact-info-value">
+              Check-in: 3:00 PM – 8:00 PM<br>
+              Check-out: by 11:00 AM<br>
+              <span style="font-size:0.78rem;color:var(--text-light);">Early/late by prior arrangement</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:2.5rem;padding:2rem;background:var(--navy);">
+          <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--cream);margin-bottom:0.75rem;">Social Media</h4>
+          <p style="font-size:0.8rem;color:rgba(245,240,232,0.55);margin-bottom:1rem;">Follow Villa Maris for seasonal inspiration, guest stories, and Tiburon life.</p>
+          <div style="display:flex;gap:0.75rem;">
+            <a href="#" style="width:40px;height:40px;border:1px solid rgba(184,150,78,0.3);display:flex;align-items:center;justify-content:center;color:rgba(245,240,232,0.55);font-size:1rem;text-decoration:none;transition:all 0.3s ease;" aria-label="Instagram"
+               onmouseover="this.style.borderColor='#b8964e';this.style.color='#b8964e';" 
+               onmouseout="this.style.borderColor='rgba(184,150,78,0.3)';this.style.color='rgba(245,240,232,0.55)';">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" style="width:40px;height:40px;border:1px solid rgba(184,150,78,0.3);display:flex;align-items:center;justify-content:center;color:rgba(245,240,232,0.55);font-size:1rem;text-decoration:none;transition:all 0.3s ease;" aria-label="Facebook"
+               onmouseover="this.style.borderColor='#b8964e';this.style.color='#b8964e';" 
+               onmouseout="this.style.borderColor='rgba(184,150,78,0.3)';this.style.color='rgba(245,240,232,0.55)';">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" style="width:40px;height:40px;border:1px solid rgba(184,150,78,0.3);display:flex;align-items:center;justify-content:center;color:rgba(245,240,232,0.55);font-size:1rem;text-decoration:none;transition:all 0.3s ease;" aria-label="Pinterest"
+               onmouseover="this.style.borderColor='#b8964e';this.style.color='#b8964e';" 
+               onmouseout="this.style.borderColor='rgba(184,150,78,0.3)';this.style.color='rgba(245,240,232,0.55)';">
+              <i class="fab fa-pinterest-p"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP / LOCATION -->
+<div class="map-placeholder">
+  <img src="/images/50-e797dc48caf532344fec95bfdac49258-o.webp" alt="Tiburon aerial view">
+  <div class="map-overlay-card">
+    <div class="map-pin"><i class="fas fa-map-marker-alt"></i></div>
+    <h3>Villa Maris Tiburon</h3>
+    <p>Tiburon, Marin County<br>California 94920<br><br>
+    <span style="font-size:0.72rem;color:var(--text-light);">Exact address sent with booking confirmation</span></p>
+  </div>
+</div>
+
+<!-- DIRECTIONS -->
+<section class="section" style="background:var(--cream);">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Getting Here</span>
+      <h2 class="section-title">Directions to Villa Maris</h2>
+      <div class="gold-divider centered"></div>
+    </div>
+    <div class="directions-grid" style="margin-top:3rem;">
+      <div class="direction-card reveal">
+        <h4><i class="fas fa-car"></i> By Car from San Francisco</h4>
+        <p>Take the Golden Gate Bridge north on US-101. Exit at Tiburon Blvd/E. Blithedale Ave. Continue east on Tiburon Blvd for approximately 5 miles into the town of Tiburon. Approximately 25–35 minutes from downtown San Francisco, depending on bridge traffic.</p>
+      </div>
+      <div class="direction-card reveal reveal-delay-1">
+        <h4><i class="fas fa-ship"></i> By Ferry from San Francisco</h4>
+        <p>The most scenic option — take the Golden Gate Ferry from the San Francisco Ferry Building to Tiburon. A 20-minute crossing with views of the bridge, Alcatraz, and the Marin headlands. Villa Maris offers complimentary shuttle pickup from the Tiburon Ferry terminal.</p>
+      </div>
+      <div class="direction-card reveal reveal-delay-2">
+        <h4><i class="fas fa-plane"></i> From San Francisco Airport (SFO)</h4>
+        <p>Take US-101 North from SFO. Cross the Golden Gate Bridge and exit at Tiburon Blvd. Approximately 45–60 minutes from SFO, depending on traffic. From OAK/SJC, cross the Bay Bridge to US-101 North — allow 60–75 minutes. Private car service available on request.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="section-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;">
+      <div>
+        <span class="section-eyebrow">Frequently Asked</span>
+        <h2 class="section-title">Common Questions</h2>
+        <div class="gold-divider"></div>
+        <p style="font-size:0.9rem;color:var(--text-mid);line-height:1.8;font-weight:300;">Can't find the answer you need? Our team is happy to help — call us at +1 (415) 555-0180 or send a message above.</p>
+        <div style="margin-top:2rem;overflow:hidden;height:300px;">
+          <img src="/images/22-4fd487274e5f84132129ab5fca7f3825-o.webp" alt="Villa Maris" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Is breakfast really included?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Yes — every stay at Villa Maris includes a full gourmet breakfast prepared fresh by our estate chef, Chef Rafael Orosco. Breakfast is served from 8–10am in the main dining room or on your private balcony or patio by request. It is not a continental buffet — it is a proper seasonal, farm-to-table morning meal.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Can we rent the entire estate?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Yes — Villa Maris offers exclusive-use bookings for the full estate. This is ideal for family reunions, corporate retreats, wedding parties, and multi-generational gatherings. All 8 suites, all amenities, and dedicated staff are available exclusively to your group. Please contact us for exclusive-use pricing and availability.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Do you accommodate weddings?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Villa Maris welcomes intimate weddings of up to 30 guests on the estate grounds. Our panoramic deck, rose gardens, and bay views create an extraordinary setting for ceremonies and celebrations. We work with a select network of preferred vendors and can assist with full event planning. Contact us to begin the conversation.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Are pets welcome?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Yes — select suites at Villa Maris are pet-friendly. We welcome well-behaved dogs under 50 lbs. There is a $75/stay pet fee, and we ask that dogs not be left unattended in suites. Please note your pet at time of booking so we can assign an appropriate suite and prepare accordingly.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            What is your cancellation policy?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Cancellations made 14 or more days before check-in receive a full refund of the deposit. Cancellations within 14 days of check-in are non-refundable. We strongly recommend travel insurance for all bookings. In the event of extenuating circumstances, please contact us directly — we handle each situation with care.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Is there parking on-site?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Yes — Villa Maris has private estate parking for all guests at no additional charge. EV charging is available. We also offer complimentary shuttle service to and from the Tiburon Ferry terminal for guests arriving or departing by ferry from San Francisco.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            How far are you from San Francisco?
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Villa Maris is approximately 25–35 minutes from downtown San Francisco by car (depending on Golden Gate Bridge traffic), or a scenic 20-minute ferry ride from the San Francisco Ferry Building to the Tiburon ferry terminal. We provide complimentary shuttle pickup from the terminal.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-banner">
+  <h2 class="cta-title">Ready to Book Your Stay?</h2>
+  <p class="cta-subtitle">Reserve directly for our best available rates. Our team is standing by.</p>
+  <div class="cta-buttons">
+    <a href="/reservations.html" class="btn btn-dark">Book Now</a>
+    <a href="tel:+14155550180" class="btn btn-outline-white" style="border-color:rgba(255,255,255,0.5);color:#fff;">Call +1 (415) 555-0180</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Villa Maris</div>
+      <span class="footer-brand-sub">Tiburon · Private Luxury Estate</span>
+      <p>A singular estate perched above Richardson Bay in Tiburon, California — offering eight curated suites and an extraordinary bay experience.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="/about.html">About</a></li><li><a href="/rooms.html">Suites</a></li>
+      <li><a href="/amenities.html">Amenities</a></li><li><a href="/activities.html">Experiences</a></li>
+      <li><a href="/dining.html">Dining</a></li><li><a href="/gallery.html">Gallery</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Book</h4><ul>
+      <li><a href="/reservations.html">Reservations</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="#">Cancellation Policy</a></li>
+      <li><a href="#">Privacy Policy</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4>
+      <p>Tiburon, CA 94920</p>
+      <p style="margin-top:1rem;"><a href="tel:+14155550180" style="color:rgba(245,240,232,0.55);text-decoration:none;">+1 (415) 555-0180</a></p>
+      <p><a href="mailto:stay@villamaristiburon.com" style="color:rgba(245,240,232,0.55);text-decoration:none;">stay@villamaristiburon.com</a></p>
+      <p style="margin-top:1rem;">villamaristiburon.com</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Villa Maris Tiburon LLC · All Rights Reserved · Tiburon, CA 94920</div>
+    <div class="footer-social">
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

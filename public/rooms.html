@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suites & Rooms — Villa Maris Tiburon</title>
+  <meta name="description" content="Eight uniquely designed suites at Villa Maris Tiburon — from panoramic bay-view masters to serene garden sanctuaries. Each suite is a curated world of its own.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .suite-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-bottom: 3rem;
+      background: #fff;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.07);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .suite-card:hover { box-shadow: 0 12px 60px rgba(0,0,0,0.13); }
+    .suite-card.reverse { direction: rtl; }
+    .suite-card.reverse > * { direction: ltr; }
+    .suite-image { 
+      position: relative; 
+      overflow: hidden;
+      min-height: 400px;
+    }
+    .suite-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+      display: block;
+    }
+    .suite-card:hover .suite-image img { transform: scale(1.04); }
+    .suite-image-badge {
+      position: absolute;
+      top: 1.5rem; left: 1.5rem;
+      background: var(--gold);
+      color: #fff;
+      padding: 0.35rem 1rem;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+    .suite-body {
+      padding: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .suite-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem;
+      color: rgba(184,150,78,0.1);
+      line-height: 1;
+      font-weight: 300;
+      margin-bottom: -1rem;
+    }
+    .suite-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: var(--navy);
+      margin-bottom: 0.3rem;
+      line-height: 1.2;
+    }
+    .suite-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin: 0.75rem 0 1.2rem;
+    }
+    .suite-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: var(--gold);
+    }
+    .suite-per { font-size: 0.75rem; color: var(--text-light); }
+    .suite-desc {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      line-height: 1.85;
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+    }
+    .suite-specs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.8rem;
+      padding: 1.5rem;
+      background: var(--cream);
+      border-left: 3px solid var(--gold);
+    }
+    .suite-spec {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+      color: var(--text-mid);
+    }
+    .suite-spec i { color: var(--gold); width: 16px; }
+    .suite-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .rates-bar {
+      background: var(--navy);
+      padding: 2rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .rates-bar-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--cream);
+    }
+    .rates-bar-note {
+      font-size: 0.78rem;
+      color: rgba(245,240,232,0.55);
+      margin-top: 0.3rem;
+    }
+    .rates-items {
+      display: flex;
+      gap: 2.5rem;
+    }
+    .rates-item {
+      text-align: center;
+    }
+    .rates-season {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+    .rates-range {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: var(--cream);
+    }
+    @media (max-width: 900px) {
+      .suite-card, .suite-card.reverse { grid-template-columns: 1fr; direction: ltr; }
+      .suite-image { min-height: 280px; }
+      .suite-body { padding: 2rem; }
+      .rates-bar { padding: 2rem; }
+      .rates-items { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Villa Maris</span>
+    <span class="nav-logo-sub">Tiburon · Private Luxury Estate</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/rooms.html" class="active">Suites</a></li>
+    <li><a href="/amenities.html">Amenities</a></li>
+    <li><a href="/activities.html">Experiences</a></li>
+    <li><a href="/dining.html">Dining</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <a href="/reservations.html" class="nav-book">Book Now</a>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="/">Home</a><a href="/about.html">About</a><a href="/rooms.html">Suites</a>
+  <a href="/amenities.html">Amenities</a><a href="/activities.html">Experiences</a>
+  <a href="/dining.html">Dining</a><a href="/gallery.html">Gallery</a>
+  <a href="/contact.html">Contact</a>
+  <a href="/reservations.html" style="color:var(--gold);">Book Now</a>
+</div>
+
+<div class="page-hero" style="background-image: url('/images/16-148c5b450b47725874df2c4fc49fdba2-o.webp');">
+  <div class="page-hero-content">
+    <span class="page-hero-eyebrow">Accommodations</span>
+    <h1 class="page-hero-title">Eight Suites.<br>Eight Worlds.</h1>
+  </div>
+</div>
+
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span> Suites &amp; Rooms
+</div>
+
+<!-- INTRO -->
+<section class="section" style="padding-bottom:2rem;">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Our Accommodations</span>
+      <h2 class="section-title">Every Suite, a Story</h2>
+      <div class="gold-divider centered"></div>
+      <p class="section-subtitle">Villa Maris offers eight individually designed suites — each with its own character, its own view, and its own story. All include complimentary gourmet breakfast, evening wine service, and access to all estate amenities.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RATES BAR -->
+<div class="rates-bar">
+  <div>
+    <div class="rates-bar-text">Seasonal Rates</div>
+    <div class="rates-bar-note">All rates include daily breakfast · 2-night minimum weekends · Taxes &amp; fees additional</div>
+  </div>
+  <div class="rates-items">
+    <div class="rates-item">
+      <div class="rates-season">Standard Season</div>
+      <div class="rates-range">$495 – $695</div>
+    </div>
+    <div class="rates-item">
+      <div class="rates-season">Peak Season (Jun–Sep)</div>
+      <div class="rates-range">$595 – $895</div>
+    </div>
+    <div class="rates-item">
+      <div class="rates-season">Holiday Rates</div>
+      <div class="rates-range">Upon Request</div>
+    </div>
+  </div>
+  <a href="/reservations.html" class="btn btn-primary">Check Availability</a>
+</div>
+
+<!-- SUITES -->
+<section class="section" style="padding-top:4rem;">
+  <div class="section-inner">
+
+    <!-- SUITE 1 -->
+    <div class="suite-card reveal">
+      <div class="suite-image">
+        <img src="/images/16-148c5b450b47725874df2c4fc49fdba2-o.webp" alt="The Tiburon Bay Suite">
+        <span class="suite-image-badge">Most Requested</span>
+      </div>
+      <div class="suite-body">
+        <div class="suite-number">01</div>
+        <h2 class="suite-name">The Tiburon Bay Suite</h2>
+        <div class="suite-price-row">
+          <span class="suite-price">$695</span>
+          <span class="suite-per">/ night</span>
+        </div>
+        <p class="suite-desc">Our premier suite opens directly to a private balcony facing the full sweep of Richardson Bay. A shiplap fireplace and mounted screen anchor the room; handcrafted linens dress a king bed positioned for maximum water views. The adjoining bath features heated floors and a marble-clad shower.</p>
+        <div class="suite-specs">
+          <div class="suite-spec"><i class="fas fa-bed"></i> King Bed</div>
+          <div class="suite-spec"><i class="fas fa-water"></i> Bay View</div>
+          <div class="suite-spec"><i class="fas fa-door-open"></i> Private Balcony</div>
+          <div class="suite-spec"><i class="fas fa-fire"></i> Fireplace</div>
+          <div class="suite-spec"><i class="fas fa-tv"></i> 65" Smart TV</div>
+          <div class="suite-spec"><i class="fas fa-bath"></i> Rain Shower</div>
+        </div>
+        <div class="suite-actions">
+          <a href="/reservations.html?room=tiburon-bay-suite" class="btn btn-primary">Reserve This Suite</a>
+          <a href="/contact.html" class="btn btn-outline">Inquire</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUITE 2 -->
+    <div class="suite-card reverse reveal">
+      <div class="suite-image">
+        <img src="/images/18-697800410cd4a8e747504cbbfc00cebe-o.webp" alt="The Golden Gate Vista">
+        <span class="suite-image-badge">Best Views</span>
+      </div>
+      <div class="suite-body">
+        <div class="suite-number">02</div>
+        <h2 class="suite-name">The Golden Gate Vista</h2>
+        <div class="suite-price-row">
+          <span class="suite-price">$795</span>
+          <span class="suite-per">/ night</span>
+        </div>
+        <p class="suite-desc">The crown jewel of Villa Maris. A freestanding soaking tub is positioned directly before a triple bay window framing the Golden Gate Bridge, the San Francisco skyline, and Belvedere Island. Dual vanities in marble, shiplap walls, and sconce lighting create a spa-like sanctuary unlike any other in Marin.</p>
+        <div class="suite-specs">
+          <div class="suite-spec"><i class="fas fa-bed"></i> King Bed</div>
+          <div class="suite-spec"><i class="fas fa-water"></i> Panoramic View</div>
+          <div class="suite-spec"><i class="fas fa-bath"></i> Freestanding Tub</div>
+          <div class="suite-spec"><i class="fas fa-sink"></i> Dual Vanity</div>
+          <div class="suite-spec"><i class="fas fa-fire"></i> Fireplace</div>
+          <div class="suite-spec"><i class="fas fa-door-open"></i> Private Deck Access</div>
+        </div>
+        <div class="suite-actions">
+          <a href="/reservations.html?room=golden-gate-vista" class="btn btn-primary">Reserve This Suite</a>
+          <a href="/contact.html" class="btn btn-outline">Inquire</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUITE 3 -->
+    <div class="suite-card reveal">
+      <div class="suite-image">
+        <img src="/images/17-d5c8fb6e9347d80cc8f321a531cb71f3-o.webp" alt="The Marin Sanctuary">
+      </div>
+      <div class="suite-body">
+        <div class="suite-number">03</div>
+        <h2 class="suite-name">The Marin Sanctuary</h2>
+        <div class="suite-price-row">
+          <span class="suite-price">$595</span>
+          <span class="suite-per">/ night</span>
+        </div>
+        <p class="suite-desc">A serene garden-facing retreat where natural light filters through private French doors leading to a quiet stone patio. The shiplap fireplace and built-in media wall create an atmosphere of focused calm. Perfect for those seeking rest over views — though the sound of birdsong and bay breezes is its own kind of magic.</p>
+        <div class="suite-specs">
+          <div class="suite-spec"><i class="fas fa-bed"></i> King Bed</div>
+          <div class="suite-spec"><i class="fas fa-leaf"></i> Garden View</div>
+          <div class="suite-spec"><i class="fas fa-door-open"></i> Private Patio</div>
+          <div class="suite-spec"><i class="fas fa-fire"></i> Fireplace</div>
+          <div class="suite-spec"><i class="fas fa-tv"></i> 65" Smart TV</div>
+          <div class="suite-spec"><i class="fas fa-bath"></i> Deep Soaking Tub</div>
+        </div>
+        <div class="suite-actions">
+          <a href="/reservations.html?room=marin-sanctuary" class="btn btn-primary">Reserve This Suite</a>
+          <a href="/contact.html" class="btn btn-outline">Inquire</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUITE 4 -->
+    <div class="suite-card reverse reveal">
+      <div class="suite-image">
+        <img src="/images/22-4fd487274e5f84132129ab5fca7f3825-o.webp" alt="The Alcatraz Suite">
+      </div>
+      <div class="suite-body">
+        <div class="suite-number">04</div>
+        <h2 class="suite-name">The Alcatraz Suite</h2>
+        <div class="suite-price-row">
+          <span class="suite-price">$650</span>
+          <span class="suite-per">/ night</span>
+        </div>
+        <p class="suite-desc">Named for its direct sightline to the island fortress across the bay, this suite features a living area with fireplace, a private bay-facing deck, and the most dramatic nighttime views of San Francisco of any room on the estate. The city sparkles; the island glows; the bridge anchors it all.</p>
+        <div class="suite-specs">
+          <div class="suite-spec"><i class="fas fa-bed"></i> King Bed</div>
+          <div class="suite-spec"><i class="fas fa-water"></i> Bay View</div>
+          <div class="suite-spec"><i class="fas fa-door-open"></i> Private Deck</div>
+          <div class="suite-spec"><i class="fas fa-fire"></i> Fireplace</div>
+          <div class="suite-spec"><i class="fas fa-tv"></i> Smart TV</div>
+          <div class="suite-spec"><i class="fas fa-couch"></i> Sitting Area</div>
+        </div>
+        <div class="suite-actions">
+          <a href="/reservations.html?room=alcatraz-suite" class="btn btn-primary">Reserve This Suite</a>
+          <a href="/contact.html" class="btn btn-outline">Inquire</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUITE 5 -->
+    <div class="suite-card reveal">
+      <div class="suite-image">
+        <img src="/images/20-5b47b4076c2ed1b1f6a98b70c2174b10-o.webp" alt="The Captain's Quarters">
+      </div>
+      <div class="suite-body">
+        <div class="suite-number">05</div>
+        <h2 class="suite-name">The Captain's Quarters</h2>
+        <div class="suite-price-row">
+          <span class="suite-price">$550</span>
+          <span class="suite-per">/ night</span>
+        </div>
+        <p class="suite-desc">A generous bay-facing suite with a private balcony just wide enough for two chairs and a morning coffee ritual you'll never forget. Clean-line aesthetics, light-filled space, and a rain shower with heated floors give this suite an understated elegance that suits the serious traveler.</p>
+        <div class="suite-specs">
+          <div class="suite-spec"><i class="fas fa-bed"></i> King Bed</div>
+          <div class="suite-spec"><i class="fas fa-water"></i> Bay View</div>
+          <div class="suite-spec"><i class="fas fa-door-open"></i> Private Balcony</div>
+          <div class="suite-spec"><i class="fas fa-shower"></i> Rain Shower</div>
+          <div class="suite-spec"><i class="fas fa-temperature-high"></i> Heated Floors</div>
+          <div class="suite-spec"><i class="fas fa-tv"></i> Smart TV</div>
+        </div>
+        <div class="suite-actions">
+          <a href="/reservations.html?room=captains-quarters" class="btn btn-primary">Reserve This Suite</a>
+          <a href="/contact.html" class="btn btn-outline">Inquire</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUITE 6 -->
+    <div class="suite-card reverse reveal">
+      <div class="suite-image">
+        <img src="/images/25-f10b0faf6f46c2aabc68ceaa96d064fb-o.webp" alt="The Hillside Retreat">
+      </div>
+      <div class="suite-body">
+        <div class="suite-number">06</div>
+        <h2 class="suite-name">The Hillside Retreat</h2>
+        <div class="suite-price-row">
+          <span class="suite-price">$525</span>
+          <span class="suite-per">/ night</span>
+        </div>
+        <p class="suite-desc">A thoughtfully appointed suite with skylights that bathe the space in natural light and a built-in soaking tub set within a herringbone tile surround. The elevated hillside position offers glimpses of the bay through the surrounding oaks — intimate, warm, and restorative.</p>
+        <div class="suite-specs">
+          <div class="suite-spec"><i class="fas fa-bed"></i> Queen Bed</div>
+          <div class="suite-spec"><i class="fas fa-sun"></i> Skylight</div>
+          <div class="suite-spec"><i class="fas fa-bath"></i> Soaking Tub</div>
+          <div class="suite-spec"><i class="fas fa-tree"></i> Garden View</div>
+          <div class="suite-spec"><i class="fas fa-wifi"></i> High-Speed WiFi</div>
+          <div class="suite-spec"><i class="fas fa-tv"></i> Smart TV</div>
+        </div>
+        <div class="suite-actions">
+          <a href="/reservations.html?room=hillside-retreat" class="btn btn-primary">Reserve This Suite</a>
+          <a href="/contact.html" class="btn btn-outline">Inquire</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUITE 7 -->
+    <div class="suite-card reveal">
+      <div class="suite-image">
+        <img src="/images/11-7cb3176ce156d13a4e28da9585b8e088-o.webp" alt="The Marina Room">
+      </div>
+      <div class="suite-body">
+        <div class="suite-number">07</div>
+        <h2 class="suite-name">The Marina Room</h2>
+        <div class="suite-price-row">
+          <span class="suite-price">$575</span>
+          <span class="suite-per">/ night</span>
+        </div>
+        <p class="suite-desc">Light-washed and airy, this suite frames a distinct view of Tiburon's harbor and the sailboats that drift in and out of Richardson Bay. Vaulted ceilings with original dark timber beams, white linen sofas, and an artistic reading nook make this suite feel like your own private coastal pied-à-terre.</p>
+        <div class="suite-specs">
+          <div class="suite-spec"><i class="fas fa-bed"></i> King Bed</div>
+          <div class="suite-spec"><i class="fas fa-water"></i> Marina View</div>
+          <div class="suite-spec"><i class="fas fa-ruler-vertical"></i> Vaulted Ceilings</div>
+          <div class="suite-spec"><i class="fas fa-couch"></i> Reading Nook</div>
+          <div class="suite-spec"><i class="fas fa-bath"></i> Marble Bath</div>
+          <div class="suite-spec"><i class="fas fa-tv"></i> Smart TV</div>
+        </div>
+        <div class="suite-actions">
+          <a href="/reservations.html?room=marina-room" class="btn btn-primary">Reserve This Suite</a>
+          <a href="/contact.html" class="btn btn-outline">Inquire</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUITE 8 -->
+    <div class="suite-card reverse reveal">
+      <div class="suite-image">
+        <img src="/images/6-5db5923ca6af48f4dccf065a4cf532f2-o.webp" alt="The Garden Bower">
+      </div>
+      <div class="suite-body">
+        <div class="suite-number">08</div>
+        <h2 class="suite-name">The Garden Bower</h2>
+        <div class="suite-price-row">
+          <span class="suite-price">$495</span>
+          <span class="suite-per">/ night</span>
+        </div>
+        <p class="suite-desc">The most tucked-away and private suite on the estate, The Garden Bower opens to a secluded rose garden patio. Fireplace, exposed beam ceiling, and curated artwork give this suite a gallery-like warmth. Mornings here are defined by roses in bloom and the soft sound of the bay below.</p>
+        <div class="suite-specs">
+          <div class="suite-spec"><i class="fas fa-bed"></i> Queen Bed</div>
+          <div class="suite-spec"><i class="fas fa-seedling"></i> Rose Garden View</div>
+          <div class="suite-spec"><i class="fas fa-door-open"></i> Private Patio</div>
+          <div class="suite-spec"><i class="fas fa-fire"></i> Fireplace</div>
+          <div class="suite-spec"><i class="fas fa-ruler-vertical"></i> Exposed Beams</div>
+          <div class="suite-spec"><i class="fas fa-bath"></i> Rain Shower</div>
+        </div>
+        <div class="suite-actions">
+          <a href="/reservations.html?room=garden-bower" class="btn btn-primary">Reserve This Suite</a>
+          <a href="/contact.html" class="btn btn-outline">Inquire</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- INCLUDED -->
+<section class="section-dark" style="padding:4rem;">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Included With Every Suite</span>
+      <h2 class="section-title light">The Villa Maris Standard</h2>
+      <div class="gold-divider centered"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2.5rem;" class="includes-grid">
+      <div style="text-align:center;padding:1.5rem;border:1px solid rgba(184,150,78,0.15);" class="reveal">
+        <i class="fas fa-egg" style="font-size:1.8rem;color:var(--gold);margin-bottom:1rem;"></i>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:0.4rem;">Daily Breakfast</div>
+        <div style="font-size:0.78rem;color:rgba(245,240,232,0.5);">Seasonal gourmet meal prepared by our estate chef</div>
+      </div>
+      <div style="text-align:center;padding:1.5rem;border:1px solid rgba(184,150,78,0.15);" class="reveal reveal-delay-1">
+        <i class="fas fa-wine-glass" style="font-size:1.8rem;color:var(--gold);margin-bottom:1rem;"></i>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:0.4rem;">Evening Wine</div>
+        <div style="font-size:0.78rem;color:rgba(245,240,232,0.5);">California wine, charcuterie &amp; artisan cheese nightly</div>
+      </div>
+      <div style="text-align:center;padding:1.5rem;border:1px solid rgba(184,150,78,0.15);" class="reveal reveal-delay-2">
+        <i class="fas fa-wifi" style="font-size:1.8rem;color:var(--gold);margin-bottom:1rem;"></i>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:0.4rem;">High-Speed WiFi</div>
+        <div style="font-size:0.78rem;color:rgba(245,240,232,0.5);">Fiber internet throughout the estate</div>
+      </div>
+      <div style="text-align:center;padding:1.5rem;border:1px solid rgba(184,150,78,0.15);" class="reveal reveal-delay-3">
+        <i class="fas fa-parking" style="font-size:1.8rem;color:var(--gold);margin-bottom:1rem;"></i>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:0.4rem;">Complimentary Parking</div>
+        <div style="font-size:0.78rem;color:rgba(245,240,232,0.5);">Private estate parking for all guests</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-banner">
+  <h2 class="cta-title">Reserve Your Suite at Villa Maris</h2>
+  <p class="cta-subtitle">Check availability and book directly for our best rates. Two-night minimum on weekends.</p>
+  <div class="cta-buttons">
+    <a href="/reservations.html" class="btn btn-dark">Check Availability</a>
+    <a href="/contact.html" class="btn btn-outline-white" style="border-color:rgba(255,255,255,0.5);color:#fff;">Private Inquiry</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Villa Maris</div>
+      <span class="footer-brand-sub">Tiburon · Private Luxury Estate</span>
+      <p>A singular estate perched above Richardson Bay in Tiburon, California — eight curated suites and an unmatched bay experience.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="/about.html">About</a></li><li><a href="/rooms.html">Suites</a></li>
+      <li><a href="/amenities.html">Amenities</a></li><li><a href="/activities.html">Experiences</a></li>
+      <li><a href="/dining.html">Dining</a></li><li><a href="/gallery.html">Gallery</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Book</h4><ul>
+      <li><a href="/reservations.html">Reservations</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="#">Cancellation Policy</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4>
+      <p>Tiburon, CA 94920</p>
+      <p style="margin-top:1rem;"><a href="tel:+14155550180" style="color:rgba(245,240,232,0.55);text-decoration:none;">+1 (415) 555-0180</a></p>
+      <p><a href="mailto:stay@villamaristiburon.com" style="color:rgba(245,240,232,0.55);text-decoration:none;">stay@villamaristiburon.com</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Villa Maris Tiburon LLC · All Rights Reserved</div>
+    <div class="footer-social">
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

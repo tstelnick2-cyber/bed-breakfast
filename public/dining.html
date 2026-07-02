@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dining — Villa Maris Tiburon</title>
+  <meta name="description" content="Farm-to-table gourmet breakfast, evening wine and charcuterie, all-day coffee bar — the dining experience at Villa Maris Tiburon.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .menu-section { margin-bottom: 3rem; }
+    .menu-section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      color: var(--cream);
+      border-bottom: 1px solid rgba(184,150,78,0.2);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .menu-items { display: flex; flex-direction: column; gap: 1rem; }
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(184,150,78,0.08);
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item-info { flex: 1; }
+    .menu-item-name { font-size: 0.9rem; font-weight: 500; color: var(--cream); margin-bottom: 0.25rem; }
+    .menu-item-desc { font-size: 0.78rem; color: rgba(245,240,232,0.5); line-height: 1.6; }
+    .menu-item-note { font-size: 0.68rem; font-style: italic; color: var(--gold); margin-top: 0.2rem; }
+    .dining-images-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+      height: 380px;
+    }
+    .dining-images-grid div { overflow: hidden; }
+    .dining-images-grid img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .dining-images-grid div:hover img { transform: scale(1.04); }
+    .sourcing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .sourcing-item {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      transition: var(--transition);
+    }
+    .sourcing-item:hover { border-color: var(--gold); transform: translateY(-3px); }
+    .sourcing-icon { font-size: 2rem; color: var(--gold); margin-bottom: 1rem; }
+    .sourcing-name { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--navy); margin-bottom: 0.5rem; }
+    .sourcing-desc { font-size: 0.82rem; color: var(--text-mid); line-height: 1.7; }
+    @media (max-width: 900px) {
+      .dining-images-grid { grid-template-columns: 1fr; height: auto; }
+      .dining-images-grid img { height: 240px; }
+      .sourcing-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Villa Maris</span>
+    <span class="nav-logo-sub">Tiburon · Private Luxury Estate</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/rooms.html">Suites</a></li>
+    <li><a href="/amenities.html">Amenities</a></li>
+    <li><a href="/activities.html">Experiences</a></li>
+    <li><a href="/dining.html" class="active">Dining</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <a href="/reservations.html" class="nav-book">Book Now</a>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="/">Home</a><a href="/about.html">About</a><a href="/rooms.html">Suites</a>
+  <a href="/amenities.html">Amenities</a><a href="/activities.html">Experiences</a>
+  <a href="/dining.html">Dining</a><a href="/gallery.html">Gallery</a>
+  <a href="/contact.html">Contact</a>
+  <a href="/reservations.html" style="color:var(--gold);">Book Now</a>
+</div>
+
+<div class="page-hero" style="background-image: url('/images/12-0b03bd3c2a6c37ddb01ac97422895f29-o.webp');">
+  <div class="page-hero-content">
+    <span class="page-hero-eyebrow">Dining at Villa Maris</span>
+    <h1 class="page-hero-title">Mornings Worth<br>Waking For</h1>
+  </div>
+</div>
+
+<div class="breadcrumb">
+  <a href="/">Home</a><span>›</span> Dining
+</div>
+
+<!-- INTRO -->
+<section class="section">
+  <div class="section-inner">
+    <div class="about-split">
+      <div class="about-text reveal">
+        <span class="section-eyebrow">The Kitchen</span>
+        <h2 class="section-title">A Chef's Heart at the Estate's Center</h2>
+        <div class="gold-divider"></div>
+        <p style="font-size:0.95rem;color:var(--text-mid);font-weight:300;line-height:1.9;margin-bottom:1.5rem;">The Villa Maris kitchen is no afterthought — it is the estate's living room, the gathering place, the heart of every memorable morning. Anchored by a professional Wolf range, a marble-topped center island, and a farmhouse sink overlooking the garden, it is a kitchen that inspires even those who don't cook.</p>
+        <p style="font-size:0.95rem;color:var(--text-mid);font-weight:300;line-height:1.9;margin-bottom:1.5rem;">Chef Rafael Orosco trained in the Basque Country and later the kitchens of Napa before arriving at Villa Maris. His morning breakfasts change with the seasons and with what he finds at the Marin Farmers Market — eggs from Stemple Creek, fruit from Blossom Bluff, bread from Della Fattoria in Petaluma.</p>
+        <p style="font-size:0.95rem;color:var(--text-mid);font-weight:300;line-height:1.9;margin-bottom:2rem;">Breakfast is served from 8–10am in the main dining room with its bay views, or upon request on your private balcony or patio. This is not a continental buffet — it is a proper meal, made with intention.</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <a href="/reservations.html" class="btn btn-primary">Book a Stay</a>
+          <a href="/contact.html" class="btn btn-outline">Private Dinner Inquiry</a>
+        </div>
+      </div>
+      <div class="about-image-grid reveal reveal-delay-2">
+        <img src="/images/8-89faefdb635d877a8ec40abf7d58a12d-o.webp" alt="Chef kitchen" class="about-img tall">
+        <img src="/images/7-ad18489104ec3a0a5b4af7c9588e86d5-o.webp" alt="Dining area" class="about-img short">
+        <img src="/images/10-c30544792290ba51f221122ed300556f-o.webp" alt="Dining with garden view" class="about-img short">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE MENU -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Sample Menu</span>
+      <h2 class="section-title light">A Taste of the Morning Table</h2>
+      <div class="gold-divider centered"></div>
+      <p class="section-subtitle light">Our menu changes daily and seasonally. What follows is representative of a typical Villa Maris breakfast — farm-fresh, California-inspired, and made with genuine care.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;margin-top:3.5rem;" class="menu-layout">
+      <div>
+        <div class="menu-section reveal">
+          <div class="menu-section-title">Morning Starters</div>
+          <div class="menu-items">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Seasonal Fruit Plate</div>
+                <div class="menu-item-desc">Market-fresh fruits with house-made yogurt, local honey, and toasted granola from Rustic Bakery.</div>
+                <div class="menu-item-note">Gluten-free option available</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Estate Garden Salad</div>
+                <div class="menu-item-desc">Baby arugula and herbs from our kitchen garden, shaved radish, lemon vinaigrette, aged Pecorino.</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Della Fattoria Sourdough</div>
+                <div class="menu-item-desc">Thick-cut sourdough from Petaluma's legendary Della Fattoria bakery. Served with Marin cultured butter and local preserves.</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Fresh-Pressed Juice</div>
+                <div class="menu-item-desc">Seasonal pressed juices — grapefruit-ginger, carrot-turmeric, or green apple-celery. Changes daily.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-section reveal reveal-delay-1">
+          <div class="menu-section-title">From the Wolf Range</div>
+          <div class="menu-items">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Stemple Creek Farm Eggs</div>
+                <div class="menu-item-desc">Poached, fried, or scrambled. Served over house-made toast with herbs and sea salt.</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Chef's Seasonal Frittata</div>
+                <div class="menu-item-desc">Oven-baked open frittata with rotating vegetables from the estate garden. Changes with the season.</div>
+                <div class="menu-item-note">Today: wild mushroom, gruyère & thyme</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Smoked Salmon Tartine</div>
+                <div class="menu-item-desc">Pacific wild-caught smoked salmon, crème fraîche, cucumber, capers, and chives on rye tartine.</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">French Toast Brûlée</div>
+                <div class="menu-item-desc">Brioche French toast with vanilla custard, caramelized sugar top, seasonal berry compote and whipped cream.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="menu-section reveal">
+          <div class="menu-section-title">Coffee & Tea Selections</div>
+          <div class="menu-items">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Blue Bottle Pourover</div>
+                <div class="menu-item-desc">Single-origin hand-poured coffee. Our current offering: Ethiopia Yirgacheffe, Sightglass Honduras.</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Cortado or Flat White</div>
+                <div class="menu-item-desc">Espresso-based drinks made with Oat Barista or whole milk. Latte art a specialty of our kitchen team.</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Rare Tea Library</div>
+                <div class="menu-item-desc">Selection of single-origin loose-leaf teas including Gyokuro, Assam first-flush, and Moroccan mint.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-section reveal reveal-delay-1">
+          <div class="menu-section-title">Evening Wine & Cheese Hour</div>
+          <div class="menu-items">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Marin County Pinot Noir</div>
+                <div class="menu-item-desc">A rotating selection of boutique Marin and Sonoma Coast Pinot Noirs — cool-climate, elegantly structured.</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Napa Chardonnay Selection</div>
+                <div class="menu-item-desc">Small-production Napa and Carneros Chardonnays chosen for balance and terroir expression.</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Artisan Cheese Board</div>
+                <div class="menu-item-desc">Point Reyes Toma, Cypress Grove Humboldt Fog, aged Manchego, local honeycomb, Marcona almonds, Acme baguette.</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Charcuterie Board</div>
+                <div class="menu-item-desc">Local prosciutto, coppa, and salumi with house-made mustard, cornichons, and artisan crackers.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DINING IMAGE STRIP -->
+<div class="dining-images-grid">
+  <div><img src="/images/13-9855461d9fd773b38cbdd6219befcb98-o.webp" alt="Kitchen farmhouse sink"></div>
+  <div><img src="/images/12-0b03bd3c2a6c37ddb01ac97422895f29-o.webp" alt="Dining room bay view"></div>
+  <div><img src="/images/9-17dd6bedc702104dc8db9981041972cf-o.webp" alt="Kitchen wine fridge"></div>
+</div>
+
+<!-- SOURCING -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Farm to Table</span>
+      <h2 class="section-title">We Know Our Farmers by Name</h2>
+      <div class="gold-divider centered"></div>
+      <p class="section-subtitle">Every ingredient at Villa Maris has a provenance. We shop the Marin Farmers Market weekly and maintain direct relationships with local farms, dairies, and artisan producers.</p>
+    </div>
+    <div class="sourcing-grid" style="margin-top:3rem;">
+      <div class="sourcing-item reveal">
+        <div class="sourcing-icon"><i class="fas fa-egg"></i></div>
+        <div class="sourcing-name">Stemple Creek Ranch</div>
+        <p class="sourcing-desc">Pasture-raised eggs and heritage pork from one of Marin's most beloved family farms in Tomales Bay.</p>
+      </div>
+      <div class="sourcing-item reveal reveal-delay-1">
+        <div class="sourcing-icon"><i class="fas fa-bread-slice"></i></div>
+        <div class="sourcing-name">Della Fattoria</div>
+        <p class="sourcing-desc">Wood-fired sourdoughs, naturally leavened pastries, and country loaves from this legendary Petaluma bakery.</p>
+      </div>
+      <div class="sourcing-item reveal reveal-delay-2">
+        <div class="sourcing-icon"><i class="fas fa-cheese"></i></div>
+        <div class="sourcing-name">Point Reyes Farmstead</div>
+        <p class="sourcing-desc">Award-winning Toma and Original Blue cheeses made from raw Holsteins milk on the edge of the Pacific.</p>
+      </div>
+      <div class="sourcing-item reveal">
+        <div class="sourcing-icon"><i class="fas fa-coffee"></i></div>
+        <div class="sourcing-name">Blue Bottle Coffee</div>
+        <p class="sourcing-desc">Single-origin, carefully sourced, and lightly roasted — Blue Bottle has defined Bay Area coffee culture for two decades.</p>
+      </div>
+      <div class="sourcing-item reveal reveal-delay-1">
+        <div class="sourcing-icon"><i class="fas fa-seedling"></i></div>
+        <div class="sourcing-name">Marin Farmers Market</div>
+        <p class="sourcing-desc">Our chef shops the Marin Civic Center Farmers Market weekly, building menus around the finest produce of the season.</p>
+      </div>
+      <div class="sourcing-item reveal reveal-delay-2">
+        <div class="sourcing-icon"><i class="fas fa-wine-bottle"></i></div>
+        <div class="sourcing-name">Marin & Sonoma Wineries</div>
+        <p class="sourcing-desc">We pour small-production wines from Marin, Sonoma Coast, and Napa — selected personally by our sommelier.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVATE DINING -->
+<section class="section-slate">
+  <div class="section-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;" class="private-dining-layout">
+      <div class="reveal">
+        <span class="section-eyebrow">Private Dining</span>
+        <h2 class="section-title light">Reserve the Estate Kitchen</h2>
+        <div class="gold-divider"></div>
+        <p style="font-size:0.9rem;color:rgba(245,240,232,0.7);line-height:1.9;margin-bottom:1.5rem;">For a truly unforgettable meal, Villa Maris offers private chef's table dinners in the estate kitchen for groups of 2–12 guests. Chef Rafael prepares a bespoke multi-course tasting menu built around your preferences and the finest seasonal ingredients.</p>
+        <p style="font-size:0.9rem;color:rgba(245,240,232,0.7);line-height:1.9;margin-bottom:2rem;">Private dinners are available Thursdays through Sundays. Wine pairing with Marin and Napa selections available. Perfect for anniversaries, proposals, rehearsal dinners, and corporate celebrations.</p>
+        <a href="/contact.html" class="btn btn-primary">Inquire About Private Dining</a>
+      </div>
+      <div class="reveal reveal-delay-2" style="overflow:hidden;height:400px;">
+        <img src="/images/14-aad662090907cdfcbd521e458403f0ac-o.webp" alt="Estate kitchen" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-banner">
+  <h2 class="cta-title">Stay at Villa Maris — Start with Breakfast</h2>
+  <p class="cta-subtitle">Every stay includes our gourmet morning breakfast, evening wine service, and all-day coffee bar.</p>
+  <div class="cta-buttons">
+    <a href="/reservations.html" class="btn btn-dark">Book Your Stay</a>
+    <a href="/rooms.html" class="btn btn-outline-white" style="border-color:rgba(255,255,255,0.5);color:#fff;">Explore Suites</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Villa Maris</div>
+      <span class="footer-brand-sub">Tiburon · Private Luxury Estate</span>
+      <p>Eight curated suites, panoramic bay views, and an extraordinary dining experience in Tiburon, California.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="/about.html">About</a></li><li><a href="/rooms.html">Suites</a></li>
+      <li><a href="/amenities.html">Amenities</a></li><li><a href="/activities.html">Experiences</a></li>
+      <li><a href="/dining.html">Dining</a></li><li><a href="/gallery.html">Gallery</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Book</h4><ul>
+      <li><a href="/reservations.html">Reservations</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4>
+      <p>Tiburon, CA 94920</p>
+      <p style="margin-top:1rem;"><a href="tel:+14155550180" style="color:rgba(245,240,232,0.55);text-decoration:none;">+1 (415) 555-0180</a></p>
+      <p><a href="mailto:stay@villamaristiburon.com" style="color:rgba(245,240,232,0.55);text-decoration:none;">stay@villamaristiburon.com</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Villa Maris Tiburon LLC · All Rights Reserved</div>
+    <div class="footer-social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-pinterest-p"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

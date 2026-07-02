@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Villa Maris Tiburon — A Private Luxury Guest Estate</title>
+  <meta name="description" content="Experience the pinnacle of Marin luxury at Villa Maris Tiburon — an intimate private estate with panoramic San Francisco Bay views, 8 unique suites, and curated experiences on the water.">
+  <meta property="og:title" content="Villa Maris Tiburon — A Private Luxury Guest Estate">
+  <meta property="og:description" content="Panoramic bay views, 8 exquisite suites, and curated experiences on Tiburon's most coveted hillside.">
+  <meta property="og:image" content="/images/3-6fdfabae155055c8a1467f7e860dd9bd-o.webp">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .experience-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    .experience-item {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      transition: var(--transition);
+    }
+    .experience-item:hover { 
+      transform: translateY(-5px); 
+      box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+      border-color: var(--gold);
+    }
+    .experience-icon {
+      font-size: 2rem;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .experience-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .experience-desc {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+    .feature-image-strip {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 0.5rem;
+      height: 480px;
+    }
+    .feature-image-strip img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+    .feature-image-strip div { overflow: hidden; }
+    .feature-image-strip div:hover img { transform: scale(1.04); }
+    @media (max-width: 900px) {
+      .experience-grid { grid-template-columns: 1fr 1fr; }
+      .feature-image-strip { grid-template-columns: 1fr; height: auto; }
+      .feature-image-strip img { height: 250px; }
+    }
+    @media (max-width: 600px) {
+      .experience-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Villa Maris</span>
+    <span class="nav-logo-sub">Tiburon · Private Luxury Estate</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/" class="active">Home</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/rooms.html">Suites</a></li>
+    <li><a href="/amenities.html">Amenities</a></li>
+    <li><a href="/activities.html">Experiences</a></li>
+    <li><a href="/dining.html">Dining</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <a href="/reservations.html" class="nav-book">Book Now</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="/">Home</a>
+  <a href="/about.html">About</a>
+  <a href="/rooms.html">Suites</a>
+  <a href="/amenities.html">Amenities</a>
+  <a href="/activities.html">Experiences</a>
+  <a href="/dining.html">Dining</a>
+  <a href="/gallery.html">Gallery</a>
+  <a href="/contact.html">Contact</a>
+  <a href="/reservations.html" style="color:var(--gold);">Book Now</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-slides">
+    <div class="hero-slide active" style="background-image: url('/images/3-6fdfabae155055c8a1467f7e860dd9bd-o.webp');"></div>
+    <div class="hero-slide" style="background-image: url('/images/35-f4062c2fc52b1004f6a95a849ecd9df1-o.webp');"></div>
+    <div class="hero-slide" style="background-image: url('/images/1-ac2243c6516e2d39c4d30877e9423ccf-o.webp');"></div>
+    <div class="hero-slide" style="background-image: url('/images/40-0781fac87434f55ffb484484bf1682f8-o.webp');"></div>
+    <div class="hero-slide" style="background-image: url('/images/4-061f060b94c4c4bab2d96e2ae411b4f9-o.webp');"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">Tiburon, Marin County, California</span>
+    <h1 class="hero-title">Villa Maris<br><span>Tiburon</span></h1>
+    <p class="hero-location">A Private Luxury Guest Estate</p>
+    <p class="hero-desc">Where San Francisco Bay unfolds beneath you — eight exquisite suites, rare views, and a curated world of water and wilderness.</p>
+    <div class="hero-buttons">
+      <a href="/reservations.html" class="btn btn-primary">Reserve Your Stay</a>
+      <a href="/rooms.html" class="btn btn-outline-white">Explore Suites</a>
+    </div>
+  </div>
+  <div class="hero-indicators">
+    <div class="hero-dot active"></div>
+    <div class="hero-dot"></div>
+    <div class="hero-dot"></div>
+    <div class="hero-dot"></div>
+    <div class="hero-dot"></div>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- QUICK INFO -->
+<div class="quick-info">
+  <div class="quick-info-item">
+    <div class="quick-info-number">8</div>
+    <div class="quick-info-label">Unique Suites</div>
+  </div>
+  <div class="quick-info-item">
+    <div class="quick-info-number">180°</div>
+    <div class="quick-info-label">Bay Panorama</div>
+  </div>
+  <div class="quick-info-item">
+    <div class="quick-info-number">20</div>
+    <div class="quick-info-label">Min to SF Ferry</div>
+  </div>
+  <div class="quick-info-item">
+    <div class="quick-info-number">5★</div>
+    <div class="quick-info-label">Guest Experience</div>
+  </div>
+</div>
+
+<!-- ABOUT INTRO -->
+<section class="section" style="background: var(--warm-white);">
+  <div class="section-inner">
+    <div class="about-split">
+      <div class="about-image-grid reveal">
+        <img src="/images/30-5a5a1a0bb48d42425a8f4bf5dc73f8e2-o.webp" alt="Villa Maris exterior" class="about-img tall">
+        <img src="/images/18-697800410cd4a8e747504cbbfc00cebe-o.webp" alt="Soaking tub with bay view" class="about-img short">
+        <img src="/images/20-5b47b4076c2ed1b1f6a98b70c2174b10-o.webp" alt="Private balcony" class="about-img short">
+        <div class="about-badge">
+          <span class="about-badge-num">Est.</span>
+          <span class="about-badge-text">Tiburon · CA</span>
+        </div>
+      </div>
+      <div class="about-text reveal reveal-delay-2">
+        <span class="section-eyebrow">Our Story</span>
+        <h2 class="section-title">A Hilltop Haven Above the Bay</h2>
+        <div class="gold-divider"></div>
+        <p>Perched on Tiburon's most coveted hillside, Villa Maris is a private luxury guest estate unlike any other. From your window, San Francisco gleams across the water — the Golden Gate Bridge glows at dusk, and sailboats drift below as morning light washes over the Marin headlands.</p>
+        <p>The estate's eight individually designed suites blend coastal elegance with modern California living — vaulted beam ceilings, handcrafted stone soaking tubs, and private balconies that make every moment feel cinematic.</p>
+        <div class="about-features">
+          <div class="about-feature">
+            <div class="about-feature-icon"><i class="fas fa-water"></i></div>
+            <span>Panoramic Bay Views</span>
+          </div>
+          <div class="about-feature">
+            <div class="about-feature-icon"><i class="fas fa-hot-tub"></i></div>
+            <span>Bay-View Hot Tub</span>
+          </div>
+          <div class="about-feature">
+            <div class="about-feature-icon"><i class="fas fa-fire"></i></div>
+            <span>Outdoor Fire Pit Deck</span>
+          </div>
+          <div class="about-feature">
+            <div class="about-feature-icon"><i class="fas fa-utensils"></i></div>
+            <span>Gourmet Breakfast Daily</span>
+          </div>
+        </div>
+        <a href="/about.html" class="btn btn-outline">Discover Our Story</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED SUITES -->
+<section class="section" style="background: var(--cream);">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Accommodations</span>
+      <h2 class="section-title">Eight Suites, Eight Perspectives</h2>
+      <div class="gold-divider centered"></div>
+      <p class="section-subtitle">Each suite at Villa Maris is a curated sanctuary — no two alike. From bay-facing master suites with private balconies to garden retreats with stone soaking tubs.</p>
+    </div>
+    <div class="rooms-grid">
+      <div class="room-card reveal">
+        <div class="room-card-image">
+          <img src="/images/16-148c5b450b47725874df2c4fc49fdba2-o.webp" alt="The Tiburon Bay Suite">
+          <span class="room-card-badge">Most Requested</span>
+        </div>
+        <div class="room-card-body">
+          <h3 class="room-card-name">The Tiburon Bay Suite</h3>
+          <p class="room-card-desc">Our premier bay-facing suite with direct balcony access, a wall of windows framing the water, and a shiplap fireplace flanked by a mounted 65" screen.</p>
+          <div class="room-card-features">
+            <span class="room-tag">Bay View</span>
+            <span class="room-tag">Private Balcony</span>
+            <span class="room-tag">Fireplace</span>
+            <span class="room-tag">King Bed</span>
+          </div>
+          <div class="room-card-footer">
+            <div class="room-price">
+              <span class="room-price-amount">$695</span>
+              <span class="room-price-period">per night</span>
+            </div>
+            <a href="/reservations.html?room=tiburon-bay-suite" class="btn btn-dark">Book Suite</a>
+          </div>
+        </div>
+      </div>
+      <div class="room-card reveal reveal-delay-1">
+        <div class="room-card-image">
+          <img src="/images/17-d5c8fb6e9347d80cc8f321a531cb71f3-o.webp" alt="The Marin Sanctuary">
+        </div>
+        <div class="room-card-body">
+          <h3 class="room-card-name">The Marin Sanctuary</h3>
+          <p class="room-card-desc">A serene garden-facing retreat with a herringbone-tiled soaking tub, private patio access, and calming coastal palette designed for deep rest.</p>
+          <div class="room-card-features">
+            <span class="room-tag">Garden Patio</span>
+            <span class="room-tag">Soaking Tub</span>
+            <span class="room-tag">Fireplace</span>
+            <span class="room-tag">King Bed</span>
+          </div>
+          <div class="room-card-footer">
+            <div class="room-price">
+              <span class="room-price-amount">$595</span>
+              <span class="room-price-period">per night</span>
+            </div>
+            <a href="/reservations.html?room=marin-sanctuary" class="btn btn-dark">Book Suite</a>
+          </div>
+        </div>
+      </div>
+      <div class="room-card reveal reveal-delay-2">
+        <div class="room-card-image">
+          <img src="/images/18-697800410cd4a8e747504cbbfc00cebe-o.webp" alt="The Golden Gate Vista">
+          <span class="room-card-badge">Best Views</span>
+        </div>
+        <div class="room-card-body">
+          <h3 class="room-card-name">The Golden Gate Vista</h3>
+          <p class="room-card-desc">The crown jewel of Villa Maris — a freestanding soaking tub positioned before a triple-bay window overlooking the bridge and San Francisco skyline.</p>
+          <div class="room-card-features">
+            <span class="room-tag">Panoramic View</span>
+            <span class="room-tag">Freestanding Tub</span>
+            <span class="room-tag">Dual Vanity</span>
+            <span class="room-tag">King Bed</span>
+          </div>
+          <div class="room-card-footer">
+            <div class="room-price">
+              <span class="room-price-amount">$795</span>
+              <span class="room-price-period">per night</span>
+            </div>
+            <a href="/reservations.html?room=golden-gate-vista" class="btn btn-dark">Book Suite</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:3rem;" class="reveal">
+      <a href="/rooms.html" class="btn btn-outline">View All 8 Suites</a>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE PILLARS -->
+<section class="section-dark">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">The Villa Maris Experience</span>
+      <h2 class="section-title light">Everything You Need. Nothing You Don't.</h2>
+      <div class="gold-divider centered"></div>
+    </div>
+    <div class="experience-grid" style="margin-top:3rem;">
+      <div class="experience-item reveal" style="background:rgba(255,255,255,0.04);border-color:rgba(184,150,78,0.15);">
+        <div class="experience-icon"><i class="fas fa-sailboat"></i></div>
+        <h3 class="experience-title" style="color:var(--cream);">Bay Sailing</h3>
+        <p class="experience-desc" style="color:rgba(245,240,232,0.55);">Private sailboat excursions on Richardson Bay with a certified captain. Sunset sails, day trips to Angel Island.</p>
+      </div>
+      <div class="experience-item reveal reveal-delay-1" style="background:rgba(255,255,255,0.04);border-color:rgba(184,150,78,0.15);">
+        <div class="experience-icon"><i class="fas fa-spa"></i></div>
+        <h3 class="experience-title" style="color:var(--cream);">Sunrise Yoga</h3>
+        <p class="experience-desc" style="color:rgba(245,240,232,0.55);">Morning sessions on the view deck led by our resident instructor. Flow with the bay as your backdrop.</p>
+      </div>
+      <div class="experience-item reveal reveal-delay-2" style="background:rgba(255,255,255,0.04);border-color:rgba(184,150,78,0.15);">
+        <div class="experience-icon"><i class="fas fa-wine-glass"></i></div>
+        <h3 class="experience-title" style="color:var(--cream);">Wine & Charcuterie</h3>
+        <p class="experience-desc" style="color:rgba(245,240,232,0.55);">Curated Marin and Napa selections served fireside each evening. Local cheeses, charcuterie, and honey.</p>
+      </div>
+      <div class="experience-item reveal reveal-delay-3" style="background:rgba(255,255,255,0.04);border-color:rgba(184,150,78,0.15);">
+        <div class="experience-icon"><i class="fas fa-mountain"></i></div>
+        <h3 class="experience-title" style="color:var(--cream);">Guided Hikes</h3>
+        <p class="experience-desc" style="color:rgba(245,240,232,0.55);">Ring Mountain and Mt. Tamalpais trails minutes from the estate. Guided half-day treks available upon request.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:3rem;" class="reveal">
+      <a href="/activities.html" class="btn btn-outline-white">Explore All Experiences</a>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO STRIP -->
+<div class="feature-image-strip">
+  <div>
+    <img src="/images/35-f4062c2fc52b1004f6a95a849ecd9df1-o.webp" alt="Fire pit deck">
+  </div>
+  <div>
+    <img src="/images/40-0781fac87434f55ffb484484bf1682f8-o.webp" alt="Hot tub bay view">
+  </div>
+  <div>
+    <img src="/images/5-01c79744302a13aec7a709f0d9fd08e5-o.webp" alt="SF night view">
+  </div>
+</div>
+
+<!-- DINING TEASER -->
+<section class="dining-split">
+  <div class="dining-image">
+    <img src="/images/7-ad18489104ec3a0a5b4af7c9588e86d5-o.webp" alt="Villa Maris chef's kitchen and dining">
+  </div>
+  <div class="dining-text">
+    <span class="section-eyebrow">Dining at Villa Maris</span>
+    <h2 class="section-title light">Mornings Worth Waking For</h2>
+    <div class="gold-divider"></div>
+    <p class="section-subtitle light">Our gourmet estate kitchen is the heart of Villa Maris. Each morning, guests gather around the live-edge walnut table as our chef prepares a seasonal, locally-sourced breakfast.</p>
+    <div class="dining-items">
+      <div class="dining-item">
+        <div class="dining-item-icon"><i class="fas fa-egg"></i></div>
+        <div>
+          <div class="dining-item-title">Seasonal Gourmet Breakfast</div>
+          <div class="dining-item-desc">Locally sourced, farm-to-table morning meals prepared fresh daily in our Wolf range kitchen.</div>
+        </div>
+      </div>
+      <div class="dining-item">
+        <div class="dining-item-icon"><i class="fas fa-cheese"></i></div>
+        <div>
+          <div class="dining-item-title">Evening Wine Service</div>
+          <div class="dining-item-desc">Curated California vintages, artisan charcuterie, and local cheeses by the fire each evening.</div>
+        </div>
+      </div>
+      <div class="dining-item">
+        <div class="dining-item-icon"><i class="fas fa-coffee"></i></div>
+        <div>
+          <div class="dining-item-title">All-Day Coffee & Tea Bar</div>
+          <div class="dining-item-desc">Blue Bottle coffee, specialty teas, and fresh-pressed juices available throughout the day.</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:2rem;">
+      <a href="/dining.html" class="btn btn-outline-white">Our Dining Experience</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background: var(--warm-white);">
+  <div class="section-inner">
+    <div class="section-header centered reveal">
+      <span class="section-eyebrow">Guest Stories</span>
+      <h2 class="section-title">What Our Guests Say</h2>
+      <div class="gold-divider centered"></div>
+    </div>
+    <div class="testimonials-wrapper">
+      <div class="testimonial-card reveal">
+        <span class="testimonial-quote">"</span>
+        <p class="testimonial-text">We've stayed at Auberge, Post Ranch, and Meadowood — Villa Maris stands apart entirely. There is something about waking up and watching the Golden Gate emerge from the morning fog that you simply cannot manufacture. Extraordinary in every way.</p>
+        <div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-author">Jonathan & Claire M.</div>
+        <div class="testimonial-origin">San Francisco, CA</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <span class="testimonial-quote">"</span>
+        <p class="testimonial-text">The evening sail they arranged was the highlight of our anniversary trip. We were back for the fire pit at sunset, wine glasses in hand, the city lit up across the water. The Tiburon Bay Suite is pure perfection — book it if you can.</p>
+        <div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-author">Sarah & David L.</div>
+        <div class="testimonial-origin">New York, NY</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <span class="testimonial-quote">"</span>
+        <p class="testimonial-text">The breakfast alone is worth the trip. Sunrise yoga on the deck as the bay turned gold, then a feast prepared by their chef. I've recommended Villa Maris to everyone I know. Nothing else in Marin compares.</p>
+        <div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-author">Priya N.</div>
+        <div class="testimonial-origin">Los Angeles, CA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <h2 class="cta-title">Reserve Your Suite at Villa Maris</h2>
+  <p class="cta-subtitle">Limited availability. Eight suites, zero compromises. Experience Tiburon from its most magnificent vantage.</p>
+  <div class="cta-buttons">
+    <a href="/reservations.html" class="btn btn-dark">Book Now</a>
+    <a href="/contact.html" class="btn btn-outline-white" style="border-color:rgba(255,255,255,0.5);color:#fff;">Inquire</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Villa Maris</div>
+      <span class="footer-brand-sub">Tiburon · Private Luxury Estate</span>
+      <p>A singular estate perched above Richardson Bay in Tiburon, California — offering eight curated suites, panoramic bay views, and a world of curated experiences on the water.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="/about.html">About the Estate</a></li>
+        <li><a href="/rooms.html">Suites & Rooms</a></li>
+        <li><a href="/amenities.html">Amenities</a></li>
+        <li><a href="/activities.html">Experiences</a></li>
+        <li><a href="/dining.html">Dining</a></li>
+        <li><a href="/gallery.html">Gallery</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Information</h4>
+      <ul>
+        <li><a href="/reservations.html">Reservations</a></li>
+        <li><a href="/contact.html">Contact Us</a></li>
+        <li><a href="#">Gift Cards</a></li>
+        <li><a href="#">Press & Media</a></li>
+        <li><a href="#">Cancellation Policy</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <p>Tiburon, Marin County<br>California 94920</p>
+      <p style="margin-top:1rem;"><a href="tel:+14155550180" style="color:rgba(245,240,232,0.55);text-decoration:none;">+1 (415) 555-0180</a></p>
+      <p><a href="mailto:stay@villamaristiburon.com" style="color:rgba(245,240,232,0.55);text-decoration:none;">stay@villamaristiburon.com</a></p>
+      <p style="margin-top:1rem;">villamaristiburon.com</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Villa Maris Tiburon LLC · All Rights Reserved · Tiburon, CA 94920</div>
+    <div class="footer-social">
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+    </div>
+  </div>
+</footer>
+
+<!-- STICKY BOOK BAR -->
+<div class="sticky-book-bar">
+  <div class="sticky-book-text">Ready to experience <span>Villa Maris Tiburon?</span></div>
+  <a href="/reservations.html" class="btn btn-primary">Reserve Your Suite</a>
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>
