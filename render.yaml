@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: villa-maris-tiburon
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production

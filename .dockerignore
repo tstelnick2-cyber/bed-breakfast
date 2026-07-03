@@ -1,0 +1,11 @@
+.git
+.gitignore
+.dockerignore
+.agents/
+.local/
+node_modules/
+npm-debug.log*
+.env
+.DS_Store
+zipFile.zip
+/*.webp
