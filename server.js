@@ -15,12 +15,50 @@ const AUTHNET_TRANSACTION_KEY = process.env.AUTHORIZE_NET_TRANSACTION_KEY || pro
 const AUTHNET_PUBLIC_CLIENT_KEY = process.env.AUTHORIZE_NET_PUBLIC_CLIENT_KEY || process.env.AUTHNET_PUBLIC_CLIENT_KEY || '';
 const EMAIL_FROM = process.env.RESEND_FROM || process.env.EMAIL_FROM || process.env.SMTP_FROM || 'Villa Maris Tiburon <reservations@villamaristiburon.com>';
 const RESERVATIONS_EMAIL = process.env.RESERVATIONS_EMAIL || 'reservations@villamaristiburon.com';
-const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
-const RESEND_CONFIGURED = Boolean(RESEND_API_KEY);
-const SMTP_CONFIGURED = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const SMTP_TIMEOUT_MS = Number(process.env.SMTP_TIMEOUT_MS || 15000);
-const EMAIL_CONFIGURED = RESEND_CONFIGURED || SMTP_CONFIGURED;
 const isProduction = process.env.NODE_ENV === 'production';
+
+function getEmailConfigurationStatus(env = process.env) {
+  const resendApiKey = (env.RESEND_API_KEY || '').trim();
+  const smtpHost = (env.SMTP_HOST || '').trim();
+  const smtpUser = (env.SMTP_USER || '').trim();
+  const smtpPass = (env.SMTP_PASS || '').trim();
+  const fromAddress = (env.RESEND_FROM || env.EMAIL_FROM || env.SMTP_FROM || 'Villa Maris Tiburon <reservations@villamaristiburon.com>').trim();
+  const resendConfigured = Boolean(resendApiKey);
+  const smtpConfigured = Boolean(smtpHost && smtpUser && smtpPass);
+  const configured = resendConfigured || smtpConfigured;
+  const provider = resendConfigured ? 'resend' : smtpConfigured ? 'smtp' : null;
+  const missing = [];
+
+  if (!resendConfigured && !smtpConfigured) {
+    missing.push('RESEND_API_KEY or SMTP_HOST + SMTP_USER + SMTP_PASS');
+  }
+
+  if (!fromAddress) {
+    missing.push('EMAIL_FROM/RESEND_FROM/SMTP_FROM');
+  }
+
+  return {
+    configured,
+    provider,
+    reason: resendConfigured
+      ? 'Resend is configured.'
+      : smtpConfigured
+        ? 'SMTP is configured.'
+        : 'Email sending is not configured. Set RESEND_API_KEY or SMTP_HOST with SMTP_USER and SMTP_PASS.',
+    missing,
+    resendConfigured,
+    smtpConfigured,
+    fromConfigured: Boolean(fromAddress),
+    reservationBccConfigured: Boolean((env.RESERVATION_BCC || '').trim() || 'reservations@villamaristiburon.com')
+  };
+}
+
+const EMAIL_CONFIG_STATUS = getEmailConfigurationStatus();
+const RESEND_CONFIGURED = EMAIL_CONFIG_STATUS.resendConfigured;
+const SMTP_CONFIGURED = EMAIL_CONFIG_STATUS.smtpConfigured;
+const EMAIL_CONFIGURED = EMAIL_CONFIG_STATUS.configured;
 const AUTHNET_ENDPOINTS = {
   sandbox: 'https://apitest.authorize.net/xml/v1/request.api',
   production: 'https://api2.authorize.net/xml/v1/request.api'
@@ -49,6 +87,8 @@ const RATE_PLANS = {
     paymentType: 'full'
   }
 };
+
+const CA_TAX_RATE = 0.12;
 
 const ROOM_NAMES = {
   'tiburon-bay-suite': 'The Tiburon Bay Suite',
@@ -281,7 +321,7 @@ function calculateStayQuote({ room, checkin, checkout, ratePlan = 'flexible' }) 
   const baseNightlyRate = ROOM_PRICES[room];
   const nightlyRate = Math.round(baseNightlyRate * (1 - plan.discount));
   const subtotalCents = nightlyRate * nights * 100;
-  const taxCents = Math.round(subtotalCents * 0.12);
+  const taxCents = Math.round(subtotalCents * CA_TAX_RATE);
   const totalCents = subtotalCents + taxCents;
   const discountCents = (baseNightlyRate - nightlyRate) * nights * 100;
   const depositCents = Math.round(totalCents * 0.5);
@@ -477,7 +517,7 @@ function createReceiptPdfBuffer({ reservation, quote, payment, confirmationNumbe
     const totalsTop = addons.length ? 500 : 455;
     doc.fillColor('#2f3237').font('Helvetica').fontSize(11).text('Subtotal', 60, totalsTop);
     doc.text(money(quote.subtotal), 170, totalsTop, { width: 80, align: 'right' });
-    doc.text('Occupancy Tax', 60, totalsTop + 22);
+    doc.text('California Occupancy Tax', 60, totalsTop + 22);
     doc.text('(12%)', 60, totalsTop + 36);
     doc.text(money(quote.tax), 170, totalsTop + 22, { width: 80, align: 'right' });
     doc.fillColor(navy).rect(48, totalsTop + 58, 190, 34).fill();
@@ -556,12 +596,20 @@ function createConfirmationEmailHtml({ reservation, quote, payment, confirmation
                     <td style="padding:16px 18px;border-bottom:1px solid #eee;text-align:right;">${quote.ratePlanName}</td>
                   </tr>
                   <tr>
+                    <td style="padding:16px 18px;border-bottom:1px solid #eee;color:#7a6a49;font-size:12px;font-weight:bold;">Subtotal</td>
+                    <td style="padding:16px 18px;border-bottom:1px solid #eee;text-align:right;">${money(quote.subtotal)}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:16px 18px;border-bottom:1px solid #eee;color:#7a6a49;font-size:12px;font-weight:bold;">California occupancy tax (12%)</td>
+                    <td style="padding:16px 18px;border-bottom:1px solid #eee;text-align:right;">${money(quote.tax)}</td>
+                  </tr>
+                  <tr>
                     <td style="padding:16px 18px;border-bottom:1px solid #eee;color:#7a6a49;font-size:12px;font-weight:bold;">Estimated total</td>
                     <td style="padding:16px 18px;border-bottom:1px solid #eee;text-align:right;font-weight:bold;">${money(quote.total)}</td>
                   </tr>
                   <tr>
                     <td style="padding:16px 18px;color:#7a6a49;font-size:12px;font-weight:bold;">${quote.paymentType === 'full' ? 'Paid at booking' : 'Deposit'}</td>
-                    <td style="padding:16px 18px;text-align:right;font-weight:bold;">${money(quote.amountDue)} ${payment.charged === false ? '(test authorization - no charge)' : 'paid'}</td>
+                    <td style="padding:16px 18px;text-align:right;font-weight:bold;">${money(quote.amountDue)} ${payment.charged === false ? '(Paid in full)' : 'paid'}</td>
                   </tr>
                 </table>
               </td>
@@ -608,7 +656,8 @@ async function sendConfirmationEmail({ reservation, quote, payment, confirmation
   }
 
   if (!EMAIL_CONFIGURED) {
-    return { sent: false, skipped: true, reason: 'Email sending is not configured.', ...artifacts };
+    const diagnostic = getEmailConfigurationStatus();
+    return { sent: false, skipped: true, reason: diagnostic.reason, ...artifacts };
   }
 
   const delivery = await sendEmailMessage({
@@ -847,7 +896,8 @@ async function sendCancellationEmail({ cancellation, quote, summary, pdfBuffer }
   }
 
   if (!EMAIL_CONFIGURED) {
-    return { sent: false, skipped: true, reason: 'Email sending is not configured.', ...artifacts };
+    const diagnostic = getEmailConfigurationStatus();
+    return { sent: false, skipped: true, reason: diagnostic.reason, ...artifacts };
   }
 
   const delivery = await sendEmailMessage({
@@ -889,10 +939,13 @@ app.get('/api/payment/config', (req, res) => {
 });
 
 app.get('/api/email/status', async (req, res) => {
+  const emailStatus = getEmailConfigurationStatus();
   const status = {
-    configured: EMAIL_CONFIGURED,
-    provider: RESEND_CONFIGURED ? 'resend' : SMTP_CONFIGURED ? 'smtp' : null,
-    resendConfigured: RESEND_CONFIGURED,
+    configured: emailStatus.configured,
+    provider: emailStatus.provider,
+    reason: emailStatus.reason,
+    missing: emailStatus.missing,
+    resendConfigured: emailStatus.resendConfigured,
     resendFromConfigured: Boolean(process.env.RESEND_FROM || process.env.EMAIL_FROM || process.env.SMTP_FROM),
     hostConfigured: Boolean(process.env.SMTP_HOST),
     userConfigured: Boolean(process.env.SMTP_USER),
@@ -1057,6 +1110,17 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Villa Maris Tiburon server running on port ${PORT}`);
-});
+if (!EMAIL_CONFIGURED) {
+  console.warn('Reservation email dispatch is disabled. Configure RESEND_API_KEY or SMTP_HOST/SMTP_USER/SMTP_PASS in the deployment environment.');
+}
+
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Villa Maris Tiburon server running on port ${PORT}`);
+  });
+}
+
+module.exports = {
+  app,
+  getEmailConfigurationStatus
+};
