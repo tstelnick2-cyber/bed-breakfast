@@ -16,6 +16,7 @@ const AUTHNET_PUBLIC_CLIENT_KEY = process.env.AUTHORIZE_NET_PUBLIC_CLIENT_KEY ||
 const EMAIL_FROM = process.env.EMAIL_FROM || process.env.SMTP_FROM || 'Villa Maris Tiburon <reservations@villamaristiburon.com>';
 const RESERVATIONS_EMAIL = process.env.RESERVATIONS_EMAIL || 'reservations@villamaristiburon.com';
 const SMTP_CONFIGURED = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+const SMTP_TIMEOUT_MS = Number(process.env.SMTP_TIMEOUT_MS || 15000);
 const isProduction = process.env.NODE_ENV === 'production';
 const AUTHNET_ENDPOINTS = {
   sandbox: 'https://apitest.authorize.net/xml/v1/request.api',
@@ -81,16 +82,68 @@ function formatDate(value) {
   }).format(new Date(`${value}T00:00:00Z`));
 }
 
-function createSmtpTransporter() {
+function createSmtpTransporter({ port = Number(process.env.SMTP_PORT || 587), secure = (process.env.SMTP_SECURE || '').toLowerCase() === 'true' } = {}) {
+  const host = process.env.SMTP_HOST;
   return nodemailer.createTransport({
+    name: host,
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: (process.env.SMTP_SECURE || '').toLowerCase() === 'true',
+    port,
+    secure,
+    connectionTimeout: SMTP_TIMEOUT_MS,
+    greetingTimeout: SMTP_TIMEOUT_MS,
+    socketTimeout: SMTP_TIMEOUT_MS,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS
+    },
+    tls: {
+      servername: host
     }
   });
+}
+
+function getSmtpTransportConfigs() {
+  const configuredPort = Number(process.env.SMTP_PORT || 587);
+  const configuredSecure = (process.env.SMTP_SECURE || '').toLowerCase() === 'true';
+  const configs = [{ port: configuredPort, secure: configuredSecure }];
+
+  if (configuredPort !== 465 || configuredSecure !== true) {
+    configs.push({ port: 465, secure: true });
+  }
+
+  return configs;
+}
+
+async function verifySmtpTransport() {
+  let lastError;
+
+  for (const config of getSmtpTransportConfigs()) {
+    try {
+      await createSmtpTransporter(config).verify();
+      return config;
+    } catch (error) {
+      lastError = error;
+      console.error(`SMTP verification failed on port ${config.port}:`, error);
+    }
+  }
+
+  throw lastError;
+}
+
+async function sendMailWithSmtpFallback(mailOptions) {
+  let lastError;
+
+  for (const config of getSmtpTransportConfigs()) {
+    try {
+      const info = await createSmtpTransporter(config).sendMail(mailOptions);
+      return { info, transport: config };
+    } catch (error) {
+      lastError = error;
+      console.error(`SMTP send failed on port ${config.port}:`, error);
+    }
+  }
+
+  throw lastError;
 }
 
 function createEmailErrorStatus(error, fallbackMessage) {
@@ -444,15 +497,20 @@ async function saveReservationArtifacts({ confirmationNumber, pdfBuffer, emailHt
 
 async function sendConfirmationEmail({ reservation, quote, payment, confirmationNumber, pdfBuffer }) {
   const emailHtml = createConfirmationEmailHtml({ reservation, quote, payment, confirmationNumber });
-  const artifacts = await saveReservationArtifacts({ confirmationNumber, pdfBuffer, emailHtml });
+  let artifacts = {};
+
+  try {
+    artifacts = await saveReservationArtifacts({ confirmationNumber, pdfBuffer, emailHtml });
+  } catch (error) {
+    console.error('Reservation preview artifact save failed:', error);
+    artifacts = { artifactWarning: 'Reservation preview files could not be saved.' };
+  }
 
   if (!SMTP_CONFIGURED) {
     return { sent: false, skipped: true, reason: 'SMTP is not configured.', ...artifacts };
   }
 
-  const transporter = createSmtpTransporter();
-
-  const info = await transporter.sendMail({
+  const { info, transport } = await sendMailWithSmtpFallback({
     from: EMAIL_FROM,
     to: reservation.email,
     bcc: process.env.RESERVATION_BCC || RESERVATIONS_EMAIL,
@@ -470,6 +528,7 @@ async function sendConfirmationEmail({ reservation, quote, payment, confirmation
     messageId: info.messageId,
     acceptedCount: Array.isArray(info.accepted) ? info.accepted.length : undefined,
     rejectedCount: Array.isArray(info.rejected) ? info.rejected.length : undefined,
+    transport,
     ...artifacts
   };
 }
@@ -675,15 +734,20 @@ async function saveCancellationArtifacts({ confirmationNumber, pdfBuffer, emailH
 
 async function sendCancellationEmail({ cancellation, quote, summary, pdfBuffer }) {
   const emailHtml = createCancellationEmailHtml({ cancellation, quote, summary });
-  const artifacts = await saveCancellationArtifacts({ confirmationNumber: cancellation.confirmationNumber, pdfBuffer, emailHtml });
+  let artifacts = {};
+
+  try {
+    artifacts = await saveCancellationArtifacts({ confirmationNumber: cancellation.confirmationNumber, pdfBuffer, emailHtml });
+  } catch (error) {
+    console.error('Cancellation preview artifact save failed:', error);
+    artifacts = { artifactWarning: 'Cancellation preview files could not be saved.' };
+  }
 
   if (!SMTP_CONFIGURED) {
     return { sent: false, skipped: true, reason: 'SMTP is not configured.', ...artifacts };
   }
 
-  const transporter = createSmtpTransporter();
-
-  const info = await transporter.sendMail({
+  const { info, transport } = await sendMailWithSmtpFallback({
     from: EMAIL_FROM,
     to: cancellation.email,
     bcc: process.env.RESERVATION_BCC || RESERVATIONS_EMAIL,
@@ -701,6 +765,7 @@ async function sendCancellationEmail({ cancellation, quote, summary, pdfBuffer }
     messageId: info.messageId,
     acceptedCount: Array.isArray(info.accepted) ? info.accepted.length : undefined,
     rejectedCount: Array.isArray(info.rejected) ? info.rejected.length : undefined,
+    transport,
     ...artifacts
   };
 }
@@ -730,10 +795,10 @@ app.get('/api/email/status', async (req, res) => {
 
   if (req.query.verify === 'true' && SMTP_CONFIGURED) {
     try {
-      await createSmtpTransporter().verify();
+      const verifiedTransport = await verifySmtpTransport();
       status.verified = true;
+      status.verifiedTransport = verifiedTransport;
     } catch (error) {
-      console.error('SMTP verification failed:', error);
       status.verified = false;
       if (!isProduction && error?.message) {
         status.detail = error.message;

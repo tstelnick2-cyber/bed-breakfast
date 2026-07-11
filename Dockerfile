@@ -11,6 +11,7 @@ RUN npm ci --omit=dev
 
 COPY --chown=node:node server.js ./
 COPY --chown=node:node public ./public
+RUN mkdir -p output && chown -R node:node /app
 
 USER node
 
