@@ -149,7 +149,8 @@ async function sendMailWithSmtpFallback(mailOptions) {
 function createEmailErrorStatus(error, fallbackMessage) {
   const status = {
     sent: false,
-    error: fallbackMessage
+    error: fallbackMessage,
+    diagnostic: createSmtpDiagnostic(error)
   };
 
   if (!isProduction && error?.message) {
@@ -157,6 +158,18 @@ function createEmailErrorStatus(error, fallbackMessage) {
   }
 
   return status;
+}
+
+function createSmtpDiagnostic(error) {
+  if (!error) {
+    return undefined;
+  }
+
+  return {
+    code: error.code,
+    command: error.command,
+    responseCode: error.responseCode
+  };
 }
 
 function calculateStayQuote({ room, checkin, checkout, ratePlan = 'flexible' }) {
@@ -800,6 +813,7 @@ app.get('/api/email/status', async (req, res) => {
       status.verifiedTransport = verifiedTransport;
     } catch (error) {
       status.verified = false;
+      status.diagnostic = createSmtpDiagnostic(error);
       if (!isProduction && error?.message) {
         status.detail = error.message;
       }
