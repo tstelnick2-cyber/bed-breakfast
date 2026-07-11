@@ -1082,8 +1082,15 @@ h1, h2, h3, h4 {
 
 .card-icons {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
+}
+
+.card-logo-image {
+  display: block;
+  width: min(100%, 260px);
+  height: auto;
 }
 
 .card-icon {

@@ -9,3 +9,27 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: CHECKOUT_TEST_MODE
+        value: "true"
+      - key: AUTHORIZE_NET_ENV
+        value: production
+      - key: AUTHORIZE_NET_API_LOGIN_ID
+        sync: false
+      - key: AUTHORIZE_NET_TRANSACTION_KEY
+        sync: false
+      - key: AUTHORIZE_NET_PUBLIC_CLIENT_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        value: Villa Maris Tiburon <reservations@villamaristiburon.com>
+      - key: RESERVATION_BCC
+        value: reservations@villamaristiburon.com

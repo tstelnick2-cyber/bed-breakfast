@@ -210,10 +210,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkinInput = document.getElementById('checkin');
     const checkoutInput = document.getElementById('checkout');
     const roomSelect = document.getElementById('room');
+    const ratePlanSelect = document.getElementById('ratePlan');
     const priceDisplay = document.getElementById('totalPrice');
     const nightsDisplay = document.getElementById('nightsDisplay');
     const roomPriceDisplay = document.getElementById('roomPriceDisplay');
+    const ratePlanDisplay = document.getElementById('ratePlanDisplay');
     const taxDisplay = document.getElementById('taxDisplay');
+    const dueTodayDisplay = document.getElementById('dueTodayDisplay');
+    const paymentNote = document.getElementById('paymentNote');
+    const ratePlanSummaryNote = document.getElementById('ratePlanSummaryNote');
 
     const roomPrices = {
       'tiburon-bay-suite': 695,
@@ -226,31 +231,167 @@ document.addEventListener('DOMContentLoaded', () => {
       'garden-bower': 495
     };
 
+    const ratePlans = {
+      flexible: {
+        name: 'Flexible',
+        discount: 0,
+        note: '50% deposit due at booking. Balance collected at check-in. Add-ons billed separately at arrival.',
+        paymentNote: 'A 50% deposit is required to confirm your reservation. The remaining balance is due upon check-in. All transactions are processed securely. We accept all major credit cards.'
+      },
+      prepaid: {
+        name: 'Prepaid - save 8%',
+        discount: 0.08,
+        note: 'Prepaid rate saves 8% and charges the full stay at booking. Add-ons billed separately at arrival.',
+        paymentNote: 'The prepaid rate is charged in full at booking at a lower nightly rate. All transactions are processed securely. We accept all major credit cards.'
+      }
+    };
+
+    function formatCurrency(value) {
+      const amount = Number(value || 0);
+      return '$' + amount.toLocaleString('en-US', {
+        minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    let paymentConfigPromise;
+
+    function loadAuthorizeNetConfig() {
+      if (paymentConfigPromise) return paymentConfigPromise;
+      paymentConfigPromise = fetch('/api/payment/config')
+        .then(res => res.json())
+        .then(config => {
+          if (config.testMode) return config;
+          if (!config.configured) {
+            throw new Error('Payment processing is not configured yet.');
+          }
+
+          const scriptSrc = config.environment === 'production'
+            ? 'https://js.authorize.net/v1/Accept.js'
+            : 'https://jstest.authorize.net/v1/Accept.js';
+
+          return loadScript(scriptSrc).then(() => config);
+        });
+      return paymentConfigPromise;
+    }
+
+    function detectCardType(cardNumber = '') {
+      const digits = cardNumber.replace(/\D/g, '');
+      if (/^4/.test(digits)) return 'Visa';
+      if (/^(5[1-5]|2[2-7])/.test(digits)) return 'Mastercard';
+      if (/^3[47]/.test(digits)) return 'American Express';
+      if (/^(6011|65|64[4-9])/.test(digits)) return 'Discover';
+      return 'Card';
+    }
+
+    function getTestPaymentMethod() {
+      const cardNumber = document.getElementById('cardNumber').value.replace(/\D/g, '');
+      return {
+        cardName: document.getElementById('cardName').value,
+        cardType: detectCardType(cardNumber),
+        last4: cardNumber.slice(-4) || '0000'
+      };
+    }
+
+    function loadScript(src) {
+      const existingScript = document.querySelector(`script[src="${src}"]`);
+      if (existingScript) return Promise.resolve();
+
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.charset = 'utf-8';
+        script.onload = resolve;
+        script.onerror = () => reject(new Error('Unable to load the payment processor.'));
+        document.head.appendChild(script);
+      });
+    }
+
+    function getExpirationParts(value) {
+      const digits = value.replace(/\D/g, '');
+      return {
+        month: digits.substring(0, 2),
+        year: digits.substring(2, 4)
+      };
+    }
+
+    function tokenizePayment(config) {
+      return new Promise((resolve, reject) => {
+        if (!window.Accept || typeof window.Accept.dispatchData !== 'function') {
+          reject(new Error('Payment processor is not ready.'));
+          return;
+        }
+
+        const expiry = getExpirationParts(document.getElementById('cardExpiry').value);
+        const secureData = {
+          authData: {
+            clientKey: config.clientKey,
+            apiLoginID: config.apiLoginID
+          },
+          cardData: {
+            cardNumber: document.getElementById('cardNumber').value.replace(/\D/g, ''),
+            month: expiry.month,
+            year: expiry.year,
+            cardCode: document.getElementById('cardCvv').value.replace(/\D/g, ''),
+            fullName: document.getElementById('cardName').value
+          }
+        };
+
+        window.Accept.dispatchData(secureData, response => {
+          if (response.messages.resultCode === 'Error') {
+            const errors = response.messages.message || [];
+            reject(new Error(errors.map(error => error.text).join(' ') || 'Please check your card details.'));
+            return;
+          }
+
+          resolve({
+            dataDescriptor: response.opaqueData.dataDescriptor,
+            dataValue: response.opaqueData.dataValue
+          });
+        });
+      });
+    }
+
     function updatePrice() {
       if (!checkinInput || !checkoutInput || !roomSelect) return;
       const checkin = new Date(checkinInput.value);
       const checkout = new Date(checkoutInput.value);
       const room = roomSelect.value;
+      const ratePlan = ratePlans[ratePlanSelect?.value] ? ratePlanSelect.value : 'flexible';
+      const plan = ratePlans[ratePlan];
+      if (ratePlanDisplay) ratePlanDisplay.textContent = plan.name;
+      if (paymentNote) paymentNote.textContent = plan.paymentNote;
+      if (ratePlanSummaryNote) ratePlanSummaryNote.textContent = plan.note;
       
       if (!checkinInput.value || !checkoutInput.value || !room) return;
       
       const nights = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
       if (nights <= 0) return;
       
-      const rate = roomPrices[room] || 595;
-      const subtotal = rate * nights;
-      const tax = Math.round(subtotal * 0.12);
-      const total = subtotal + tax;
+      const baseRate = roomPrices[room] || 595;
+      const rate = Math.round(baseRate * (1 - plan.discount));
+      const subtotalCents = rate * nights * 100;
+      const taxCents = Math.round(subtotalCents * 0.12);
+      const totalCents = subtotalCents + taxCents;
+      const dueTodayCents = ratePlan === 'prepaid' ? totalCents : Math.round(totalCents * 0.5);
+      const tax = taxCents / 100;
+      const total = totalCents / 100;
+      const dueToday = dueTodayCents / 100;
       
       if (nightsDisplay) nightsDisplay.textContent = nights + (nights === 1 ? ' Night' : ' Nights');
       if (roomPriceDisplay) roomPriceDisplay.textContent = '$' + rate + ' × ' + nights;
-      if (taxDisplay) taxDisplay.textContent = '$' + tax;
-      if (priceDisplay) priceDisplay.textContent = '$' + total.toLocaleString();
+      if (taxDisplay) taxDisplay.textContent = formatCurrency(tax);
+      if (priceDisplay) priceDisplay.textContent = formatCurrency(total);
+      if (ratePlanDisplay) ratePlanDisplay.textContent = plan.name;
+      if (dueTodayDisplay) dueTodayDisplay.textContent = formatCurrency(dueToday);
+      if (paymentNote) paymentNote.textContent = plan.paymentNote;
+      if (ratePlanSummaryNote) ratePlanSummaryNote.textContent = plan.note;
     }
 
-    [checkinInput, checkoutInput, roomSelect].forEach(el => {
+    [checkinInput, checkoutInput, roomSelect, ratePlanSelect].forEach(el => {
       if (el) el.addEventListener('change', updatePrice);
     });
+    updatePrice();
 
     // Set min dates
     const today = new Date().toISOString().split('T')[0];
@@ -266,11 +407,26 @@ document.addEventListener('DOMContentLoaded', () => {
     reservationForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = reservationForm.querySelector('[type="submit"]');
+      if (!reservationForm.checkValidity()) {
+        reservationForm.reportValidity();
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = 'Processing...';
 
       try {
+        const config = await loadAuthorizeNetConfig();
+        const opaqueData = config.testMode ? null : await tokenizePayment(config);
         const data = Object.fromEntries(new FormData(reservationForm));
+        data.addons = Array.from(reservationForm.querySelectorAll('input[name="addons"]:checked')).map(input => input.value);
+        if (config.testMode) data.paymentMethod = getTestPaymentMethod();
+        delete data.cardName;
+        delete data.cardNumber;
+        delete data.cardExpiry;
+        delete data.cardCvv;
+        if (opaqueData) data.opaqueData = opaqueData;
+
         const res = await fetch('/api/reservation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -290,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (err) {
         btn.disabled = false;
         btn.textContent = 'Complete Reservation';
-        alert('An error occurred. Please try again.');
+        alert(err.message || 'An error occurred. Please try again.');
       }
     });
   }

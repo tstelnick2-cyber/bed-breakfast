@@ -29,6 +29,52 @@ http://localhost:5000
 - The server listens on `process.env.PORT` or `5000`.
 - Replit-specific files and workflow configuration have been removed for local use.
 
+## Authorize.net Checkout
+
+The reservation checkout currently runs in test mode by default. Test mode accepts any card number, approves the reservation, generates a receipt PDF, and does not charge the card.
+
+```bash
+CHECKOUT_TEST_MODE=true
+```
+
+When you are ready to process live payments, set `CHECKOUT_TEST_MODE=false`. The custom reservation checkout will use Authorize.net Accept.js to tokenize card details in the browser, then charge the 50% reservation deposit from the server.
+
+Set these environment variables before processing payments:
+
+```bash
+CHECKOUT_TEST_MODE=false
+AUTHORIZE_NET_ENV=sandbox
+AUTHORIZE_NET_API_LOGIN_ID=your_api_login_id
+AUTHORIZE_NET_TRANSACTION_KEY=your_transaction_key
+AUTHORIZE_NET_PUBLIC_CLIENT_KEY=your_public_client_key
+```
+
+Use `AUTHORIZE_NET_ENV=production` with production Authorize.net credentials when the site is live.
+
+## Reservation Email
+
+Reservation confirmations include a receipt PDF attachment. Configure SMTP to send live emails:
+
+```bash
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your_smtp_user
+SMTP_PASS=your_smtp_password
+EMAIL_FROM="Villa Maris Tiburon <reservations@villamaristiburon.com>"
+RESERVATION_BCC=reservations@villamaristiburon.com
+```
+
+If SMTP is not configured, the app still completes test reservations and writes preview files to `output/reservations/`.
+
+Cancellation confirmations use the same SMTP settings. Guests can submit cancellations at:
+
+```bash
+http://localhost:5000/cancel-reservation.html
+```
+
+If SMTP is not configured, cancellation email and PDF previews are written to `output/cancellations/`.
+
 ## Docker
 
 Build the production image:

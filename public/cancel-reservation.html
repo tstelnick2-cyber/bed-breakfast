@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cancel Reservation - Villa Maris Tiburon</title>
+  <meta name="description" content="Cancel a Villa Maris Tiburon reservation and receive a cancellation confirmation receipt.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .cancel-hero-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      height: 240px;
+      margin-top: 70px;
+    }
+    .cancel-hero-strip div { overflow: hidden; }
+    .cancel-hero-strip img { width: 100%; height: 100%; object-fit: cover; }
+    .select-styled {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%23b8964e'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+    .cancel-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 3rem;
+      align-items: start;
+    }
+    .cancel-note {
+      background: var(--cream);
+      border-left: 3px solid var(--gold);
+      padding: 1.5rem;
+      font-size: 0.78rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+    }
+    .cancel-summary {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: sticky;
+      top: 100px;
+    }
+    .cancel-summary h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    .cancel-result {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      border: 1px solid rgba(184,150,78,0.35);
+      background: rgba(184,150,78,0.08);
+      color: var(--text-mid);
+      font-size: 0.84rem;
+      line-height: 1.7;
+    }
+    .cancel-result.show { display: block; }
+    @media (max-width: 900px) {
+      .cancel-hero-strip { grid-template-columns: 1fr 1fr; height: 180px; }
+      .cancel-grid { grid-template-columns: 1fr; }
+      .cancel-summary { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-text">Villa Maris</span>
+    <span class="nav-logo-sub">Tiburon - Private Luxury Estate</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/rooms.html">Suites</a></li>
+    <li><a href="/amenities.html">Amenities</a></li>
+    <li><a href="/activities.html">Experiences</a></li>
+    <li><a href="/dining.html">Dining</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <a href="/reservations.html" class="nav-book">Reservations</a>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="/">Home</a><a href="/about.html">About</a><a href="/rooms.html">Suites</a>
+  <a href="/amenities.html">Amenities</a><a href="/activities.html">Experiences</a>
+  <a href="/dining.html">Dining</a><a href="/gallery.html">Gallery</a>
+  <a href="/contact.html">Contact</a>
+  <a href="/reservations.html">Book Now</a>
+</div>
+
+<div class="cancel-hero-strip">
+  <div><img src="/images/21-6a0af833b8914471f6868eaeb20bfae6-o.webp" alt="Villa Maris sitting area"></div>
+  <div><img src="/images/35-f4062c2fc52b1004f6a95a849ecd9df1-o.webp" alt="Fire pit deck"></div>
+  <div><img src="/images/16-148c5b450b47725874df2c4fc49fdba2-o.webp" alt="Bay view suite"></div>
+  <div><img src="/images/40-0781fac87434f55ffb484484bf1682f8-o.webp" alt="Hot tub"></div>
+</div>
+
+<div class="breadcrumb">
+  <a href="/">Home</a><span>&rsaquo;</span> Cancel Reservation
+</div>
+
+<section class="reservation-section">
+  <div class="reservation-inner cancel-grid">
+    <div>
+      <div style="margin-bottom:2.5rem;">
+        <span class="section-eyebrow">Reservation Support</span>
+        <h1 class="section-title" style="font-size:2.5rem;">Cancel Reservation</h1>
+        <div class="gold-divider"></div>
+        <p style="font-size:0.88rem;color:var(--text-mid);line-height:1.8;font-weight:300;">Submit the reservation details below and we will issue a cancellation confirmation receipt to the guest email address on file.</p>
+      </div>
+
+      <div class="reservation-form">
+        <form id="cancelReservationForm" novalidate>
+          <div class="form-section">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="confirmationNumber">Booking Reference *</label>
+                <input type="text" id="confirmationNumber" name="confirmationNumber" placeholder="VM-MR7LJBX2" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Guest Email *</label>
+                <input type="email" id="email" name="email" placeholder="guest@email.com" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First Name *</label>
+                <input type="text" id="firstName" name="firstName" required>
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name *</label>
+                <input type="text" id="lastName" name="lastName" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="+1 (415) 000-0000">
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="checkin">Original Check-in *</label>
+                <input type="date" id="checkin" name="checkin" required>
+              </div>
+              <div class="form-group">
+                <label for="checkout">Original Check-out *</label>
+                <input type="date" id="checkout" name="checkout" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="room">Suite *</label>
+              <select id="room" name="room" required class="select-styled">
+                <option value="">Select a suite</option>
+                <option value="tiburon-bay-suite">The Tiburon Bay Suite</option>
+                <option value="golden-gate-vista">The Golden Gate Vista</option>
+                <option value="marin-sanctuary">The Marin Sanctuary</option>
+                <option value="alcatraz-suite">The Alcatraz Suite</option>
+                <option value="captains-quarters">The Captain's Quarters</option>
+                <option value="hillside-retreat">The Hillside Retreat</option>
+                <option value="marina-room">The Marina Room</option>
+                <option value="garden-bower">The Garden Bower</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ratePlan">Original Rate Plan</label>
+              <select id="ratePlan" name="ratePlan" class="select-styled">
+                <option value="flexible">Flexible Rate</option>
+                <option value="prepaid">Prepaid Rate</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cardType">Payment Card Type</label>
+                <select id="cardType" name="cardType" class="select-styled">
+                  <option value="Card">Card</option>
+                  <option value="Visa">Visa</option>
+                  <option value="Mastercard">Mastercard</option>
+                  <option value="American Express">American Express</option>
+                  <option value="Discover">Discover</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="last4">Card Last 4</label>
+                <input type="text" id="last4" name="last4" maxlength="4" inputmode="numeric" placeholder="4242">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="reason">Cancellation Note</label>
+              <textarea id="reason" name="reason" placeholder="Optional note for the cancellation receipt"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="form-submit" id="cancelSubmitBtn">
+            <i class="fas fa-ban" style="margin-right:0.5rem;font-size:0.75rem;"></i>
+            Cancel Reservation
+          </button>
+          <div class="cancel-result" id="cancelResult"></div>
+        </form>
+      </div>
+    </div>
+
+    <aside class="cancel-summary">
+      <h3>Cancellation Policy</h3>
+      <div class="cancel-note">
+        Free cancellation up to 14 days before check-in. Cancellations within 14 days are non-refundable. In test mode, no charge or refund is issued.
+      </div>
+      <div style="margin-top:1.5rem;font-size:0.82rem;color:var(--text-mid);line-height:1.7;">
+        <strong style="color:var(--navy);display:block;margin-bottom:0.35rem;">Need help?</strong>
+        <a href="tel:+14155550180" style="color:var(--navy);text-decoration:none;">+1 (415) 555-0180</a><br>
+        <a href="mailto:stay@villamaristiburon.com" style="color:var(--navy);text-decoration:none;">stay@villamaristiburon.com</a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">Villa Maris</div>
+      <span class="footer-brand-sub">Tiburon - Private Luxury Estate</span>
+      <p>Eight curated suites, panoramic bay views, and extraordinary experiences in Tiburon, California.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="/about.html">About</a></li><li><a href="/rooms.html">Suites</a></li>
+      <li><a href="/amenities.html">Amenities</a></li><li><a href="/activities.html">Experiences</a></li>
+      <li><a href="/dining.html">Dining</a></li><li><a href="/gallery.html">Gallery</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Book</h4><ul>
+      <li><a href="/reservations.html">Reservations</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/cancel-reservation.html">Cancellation Policy</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4>
+      <p>Tiburon, CA 94920</p>
+      <p style="margin-top:1rem;"><a href="tel:+14155550180" style="color:rgba(245,240,232,0.55);text-decoration:none;">+1 (415) 555-0180</a></p>
+      <p><a href="mailto:stay@villamaristiburon.com" style="color:rgba(245,240,232,0.55);text-decoration:none;">stay@villamaristiburon.com</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">&copy; 2025 Villa Maris Tiburon LLC - All Rights Reserved</div>
+    <div class="footer-social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-pinterest-p"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  const cancelForm = document.getElementById('cancelReservationForm');
+  const cancelResult = document.getElementById('cancelResult');
+  const cancelBtn = document.getElementById('cancelSubmitBtn');
+
+  if (cancelForm) {
+    cancelForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!cancelForm.checkValidity()) {
+        cancelForm.reportValidity();
+        return;
+      }
+
+      cancelBtn.disabled = true;
+      cancelBtn.textContent = 'Processing...';
+      cancelResult.classList.remove('show');
+
+      try {
+        const data = Object.fromEntries(new FormData(cancelForm));
+        data.paymentMethod = {
+          cardType: data.cardType || 'Card',
+          last4: (data.last4 || '').replace(/\D/g, '').slice(-4)
+        };
+        delete data.cardType;
+        delete data.last4;
+
+        const response = await fetch('/api/reservation/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const json = await response.json();
+        if (!json.success) throw new Error(json.message || 'Cancellation could not be processed.');
+
+        cancelResult.innerHTML = '<strong style="color:var(--navy);">Cancellation processed.</strong><br>' +
+          'A cancellation receipt has been generated for booking #' + json.cancellation.confirmationNumber + '.';
+        if (json.email && json.email.skipped) {
+          cancelResult.innerHTML += '<br>Email sending is not configured, so a local email preview was saved.';
+        }
+        cancelResult.classList.add('show');
+        cancelForm.reset();
+      } catch (error) {
+        cancelResult.innerHTML = '<strong style="color:#7a2d2d;">Unable to process cancellation.</strong><br>' + (error.message || 'Please try again.');
+        cancelResult.classList.add('show');
+      } finally {
+        cancelBtn.disabled = false;
+        cancelBtn.innerHTML = '<i class="fas fa-ban" style="margin-right:0.5rem;font-size:0.75rem;"></i>Cancel Reservation';
+      }
+    });
+  }
+</script>
+</body>
+</html>

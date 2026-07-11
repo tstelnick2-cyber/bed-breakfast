@@ -110,6 +110,12 @@
       color: var(--text-light);
     }
     .security-badge i { color: var(--gold); }
+    .rate-plan-hint {
+      font-size: 0.74rem;
+      color: var(--text-light);
+      margin-top: 0.45rem;
+      line-height: 1.6;
+    }
     @media (max-width: 900px) {
       .reservation-hero-strip { grid-template-columns: 1fr 1fr; height: 200px; }
       .room-select-cards { grid-template-columns: 1fr; }
@@ -171,7 +177,7 @@
         <span class="section-eyebrow">Book Direct & Save</span>
         <h1 class="section-title" style="font-size:2.5rem;">Reserve Your Suite</h1>
         <div class="gold-divider"></div>
-        <p style="font-size:0.88rem;color:var(--text-mid);line-height:1.8;font-weight:300;">Book directly for our best rates. All reservations include gourmet breakfast, evening wine service, and full estate access. A 50% deposit is collected at booking; remainder due on arrival.</p>
+        <p style="font-size:0.88rem;color:var(--text-mid);line-height:1.8;font-weight:300;">Book directly for our best rates. All reservations include gourmet breakfast, evening wine service, and full estate access. Choose a flexible rate with 50% due at booking, or a prepaid rate with a lower nightly rate and the full stay collected now.</p>
       </div>
 
       <div class="reservation-form" id="reservationFormWrap">
@@ -218,6 +224,14 @@
                   <option value="garden-bower">The Garden Bower — $495/night</option>
                 </select>
               </div>
+            </div>
+            <div class="form-group">
+              <label for="ratePlan">Rate Plan *</label>
+              <select id="ratePlan" name="ratePlan" required class="select-styled">
+                <option value="flexible">Flexible Rate - 50% due now, balance at check-in</option>
+                <option value="prepaid">Prepaid Rate - Save 8%, full amount due now</option>
+              </select>
+              <div class="rate-plan-hint">Prepaid rates apply to every suite and are charged in full at booking.</div>
             </div>
           </div>
 
@@ -302,12 +316,9 @@
               <div class="step-num">4</div>
               <div class="step-title">Payment Details</div>
             </div>
-            <p style="font-size:0.8rem;color:var(--text-mid);margin-bottom:1.5rem;line-height:1.7;">A 50% deposit is required to confirm your reservation. The remaining balance is due upon check-in. All transactions are processed securely. We accept all major credit cards.</p>
+            <p id="paymentNote" style="font-size:0.8rem;color:var(--text-mid);margin-bottom:1.5rem;line-height:1.7;">A 50% deposit is required to confirm your reservation. The remaining balance is due upon check-in. All transactions are processed securely. We accept all major credit cards.</p>
             <div class="card-icons">
-              <span class="card-icon">VISA</span>
-              <span class="card-icon">MC</span>
-              <span class="card-icon">AMEX</span>
-              <span class="card-icon">DISC</span>
+              <img class="card-logo-image" src="/images/481-4815556_payment-option-visa-mastercard-discover-amex-logo-hd.png" alt="Accepted cards: Visa, Mastercard, Discover, and American Express">
             </div>
             <div class="form-group">
               <label for="cardName">Name on Card *</label>
@@ -337,7 +348,7 @@
           <!-- POLICIES -->
           <div style="background:var(--cream);padding:1.5rem;border-left:3px solid var(--gold);margin-bottom:1.5rem;font-size:0.78rem;color:var(--text-mid);line-height:1.7;">
             <strong style="color:var(--text-dark);display:block;margin-bottom:0.5rem;">Cancellation & Booking Policy</strong>
-            Free cancellation up to 14 days before check-in. Cancellations within 14 days are non-refundable. 2-night minimum on weekends. Prices exclude applicable California state taxes (12%). By submitting, you agree to our Terms of Service and Privacy Policy.
+            Free cancellation up to 14 days before check-in. Cancellations within 14 days are non-refundable. Prepaid rates are charged in full at booking. 2-night minimum on weekends. Prices exclude applicable California state taxes (12%). By submitting, you agree to our Terms of Service and Privacy Policy.
           </div>
 
           <div class="form-group">
@@ -365,6 +376,10 @@
             <span id="roomPriceDisplay" style="color:var(--text-mid);">Select a suite</span>
           </div>
           <div class="price-row">
+            <span>Rate Plan</span>
+            <span id="ratePlanDisplay" style="color:var(--text-mid);">Flexible</span>
+          </div>
+          <div class="price-row">
             <span>Stay</span>
             <span id="nightsDisplay" style="color:var(--text-mid);">—</span>
           </div>
@@ -376,8 +391,12 @@
             <span>Estimated Total</span>
             <span id="totalPrice" style="color:var(--navy);">—</span>
           </div>
+          <div class="price-row">
+            <span>Due Today</span>
+            <span id="dueTodayDisplay" style="color:var(--navy);font-weight:600;">-</span>
+          </div>
         </div>
-        <p style="font-size:0.72rem;color:var(--text-light);margin-top:1rem;line-height:1.6;">50% deposit due at booking. Balance collected at check-in. Add-ons billed separately at arrival.</p>
+        <p id="ratePlanSummaryNote" style="font-size:0.72rem;color:var(--text-light);margin-top:1rem;line-height:1.6;">50% deposit due at booking. Balance collected at check-in. Add-ons billed separately at arrival.</p>
       </div>
 
       <div class="sidebar-card">
@@ -499,7 +518,7 @@
     <div class="footer-col"><h4>Book</h4><ul>
       <li><a href="/reservations.html">Reservations</a></li>
       <li><a href="/contact.html">Contact</a></li>
-      <li><a href="#">Cancellation Policy</a></li>
+      <li><a href="/cancel-reservation.html">Cancellation Policy</a></li>
     </ul></div>
     <div class="footer-col"><h4>Contact</h4>
       <p>Tiburon, CA 94920</p>

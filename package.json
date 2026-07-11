@@ -8,6 +8,8 @@
     "dev": "node server.js"
   },
   "dependencies": {
-    "express": "^4.22.2"
+    "express": "^4.22.2",
+    "nodemailer": "^9.0.3",
+    "pdfkit": "^0.19.1"
   }
 }
