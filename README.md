@@ -53,7 +53,16 @@ Use `AUTHORIZE_NET_ENV=production` with production Authorize.net credentials whe
 
 ## Reservation Email
 
-Reservation confirmations include a receipt PDF attachment. Configure SMTP to send live emails:
+Reservation confirmations include a receipt PDF attachment. On Render free services, use Resend because outbound SMTP ports are blocked:
+
+```bash
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM="Villa Maris Tiburon <reservations@villamaristiburon.com>"
+EMAIL_FROM="Villa Maris Tiburon <reservations@villamaristiburon.com>"
+RESERVATION_BCC=reservations@villamaristiburon.com
+```
+
+The `RESEND_FROM` or `EMAIL_FROM` domain must be verified in Resend. SMTP is still supported as a fallback for local development or paid hosts:
 
 ```bash
 SMTP_HOST=smtp.example.com
@@ -65,7 +74,7 @@ EMAIL_FROM="Villa Maris Tiburon <reservations@villamaristiburon.com>"
 RESERVATION_BCC=reservations@villamaristiburon.com
 ```
 
-If SMTP is not configured, the app still completes test reservations and writes preview files to `output/reservations/`.
+If email sending is not configured, the app still completes test reservations and writes preview files to `output/reservations/`.
 
 Cancellation confirmations use the same SMTP settings. Guests can submit cancellations at:
 

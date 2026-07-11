@@ -13,10 +13,13 @@ const AUTHNET_ENV = (process.env.AUTHORIZE_NET_ENV || process.env.AUTHNET_ENV ||
 const AUTHNET_API_LOGIN_ID = process.env.AUTHORIZE_NET_API_LOGIN_ID || process.env.AUTHNET_API_LOGIN_ID || '';
 const AUTHNET_TRANSACTION_KEY = process.env.AUTHORIZE_NET_TRANSACTION_KEY || process.env.AUTHNET_TRANSACTION_KEY || '';
 const AUTHNET_PUBLIC_CLIENT_KEY = process.env.AUTHORIZE_NET_PUBLIC_CLIENT_KEY || process.env.AUTHNET_PUBLIC_CLIENT_KEY || '';
-const EMAIL_FROM = process.env.EMAIL_FROM || process.env.SMTP_FROM || 'Villa Maris Tiburon <reservations@villamaristiburon.com>';
+const EMAIL_FROM = process.env.RESEND_FROM || process.env.EMAIL_FROM || process.env.SMTP_FROM || 'Villa Maris Tiburon <reservations@villamaristiburon.com>';
 const RESERVATIONS_EMAIL = process.env.RESERVATIONS_EMAIL || 'reservations@villamaristiburon.com';
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const RESEND_CONFIGURED = Boolean(RESEND_API_KEY);
 const SMTP_CONFIGURED = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 const SMTP_TIMEOUT_MS = Number(process.env.SMTP_TIMEOUT_MS || 15000);
+const EMAIL_CONFIGURED = RESEND_CONFIGURED || SMTP_CONFIGURED;
 const isProduction = process.env.NODE_ENV === 'production';
 const AUTHNET_ENDPOINTS = {
   sandbox: 'https://apitest.authorize.net/xml/v1/request.api',
@@ -146,6 +149,88 @@ async function sendMailWithSmtpFallback(mailOptions) {
   throw lastError;
 }
 
+async function fetchResend(pathname, options = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SMTP_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(`https://api.resend.com${pathname}`, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      }
+    });
+    const text = await response.text();
+    let body = {};
+
+    if (text) {
+      try {
+        body = JSON.parse(text);
+      } catch (error) {
+        body = { message: text };
+      }
+    }
+
+    if (!response.ok) {
+      const error = new Error(body.message || body.name || `Resend request failed with status ${response.status}`);
+      error.provider = 'resend';
+      error.status = response.status;
+      error.body = body;
+      throw error;
+    }
+
+    return body;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function verifyResendApi() {
+  await fetchResend('/domains?limit=1');
+  return { provider: 'resend' };
+}
+
+async function sendMailWithResend({ from, to, bcc, subject, html, attachments }) {
+  const payload = {
+    from,
+    to: Array.isArray(to) ? to : [to],
+    subject,
+    html
+  };
+
+  if (bcc) {
+    payload.bcc = Array.isArray(bcc) ? bcc : [bcc];
+  }
+
+  if (attachments?.length) {
+    payload.attachments = attachments.map((attachment) => ({
+      filename: attachment.filename,
+      content: Buffer.isBuffer(attachment.content)
+        ? attachment.content.toString('base64')
+        : attachment.content
+    }));
+  }
+
+  const data = await fetchResend('/emails', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+
+  return { data, provider: 'resend' };
+}
+
+async function sendEmailMessage(mailOptions) {
+  if (RESEND_CONFIGURED) {
+    return sendMailWithResend(mailOptions);
+  }
+
+  const { info, transport } = await sendMailWithSmtpFallback(mailOptions);
+  return { info, transport, provider: 'smtp' };
+}
+
 function createEmailErrorStatus(error, fallbackMessage) {
   const status = {
     sent: false,
@@ -166,9 +251,12 @@ function createSmtpDiagnostic(error) {
   }
 
   return {
+    provider: error.provider,
+    status: error.status,
     code: error.code,
     command: error.command,
-    responseCode: error.responseCode
+    responseCode: error.responseCode,
+    message: error.body?.message || error.body?.name
   };
 }
 
@@ -519,11 +607,11 @@ async function sendConfirmationEmail({ reservation, quote, payment, confirmation
     artifacts = { artifactWarning: 'Reservation preview files could not be saved.' };
   }
 
-  if (!SMTP_CONFIGURED) {
-    return { sent: false, skipped: true, reason: 'SMTP is not configured.', ...artifacts };
+  if (!EMAIL_CONFIGURED) {
+    return { sent: false, skipped: true, reason: 'Email sending is not configured.', ...artifacts };
   }
 
-  const { info, transport } = await sendMailWithSmtpFallback({
+  const delivery = await sendEmailMessage({
     from: EMAIL_FROM,
     to: reservation.email,
     bcc: process.env.RESERVATION_BCC || RESERVATIONS_EMAIL,
@@ -536,12 +624,14 @@ async function sendConfirmationEmail({ reservation, quote, payment, confirmation
     }]
   });
 
+  const messageId = delivery.data?.id || delivery.info?.messageId;
   return {
     sent: true,
-    messageId: info.messageId,
-    acceptedCount: Array.isArray(info.accepted) ? info.accepted.length : undefined,
-    rejectedCount: Array.isArray(info.rejected) ? info.rejected.length : undefined,
-    transport,
+    provider: delivery.provider,
+    messageId,
+    acceptedCount: Array.isArray(delivery.info?.accepted) ? delivery.info.accepted.length : undefined,
+    rejectedCount: Array.isArray(delivery.info?.rejected) ? delivery.info.rejected.length : undefined,
+    transport: delivery.transport,
     ...artifacts
   };
 }
@@ -756,11 +846,11 @@ async function sendCancellationEmail({ cancellation, quote, summary, pdfBuffer }
     artifacts = { artifactWarning: 'Cancellation preview files could not be saved.' };
   }
 
-  if (!SMTP_CONFIGURED) {
-    return { sent: false, skipped: true, reason: 'SMTP is not configured.', ...artifacts };
+  if (!EMAIL_CONFIGURED) {
+    return { sent: false, skipped: true, reason: 'Email sending is not configured.', ...artifacts };
   }
 
-  const { info, transport } = await sendMailWithSmtpFallback({
+  const delivery = await sendEmailMessage({
     from: EMAIL_FROM,
     to: cancellation.email,
     bcc: process.env.RESERVATION_BCC || RESERVATIONS_EMAIL,
@@ -773,12 +863,14 @@ async function sendCancellationEmail({ cancellation, quote, summary, pdfBuffer }
     }]
   });
 
+  const messageId = delivery.data?.id || delivery.info?.messageId;
   return {
     sent: true,
-    messageId: info.messageId,
-    acceptedCount: Array.isArray(info.accepted) ? info.accepted.length : undefined,
-    rejectedCount: Array.isArray(info.rejected) ? info.rejected.length : undefined,
-    transport,
+    provider: delivery.provider,
+    messageId,
+    acceptedCount: Array.isArray(delivery.info?.accepted) ? delivery.info.accepted.length : undefined,
+    rejectedCount: Array.isArray(delivery.info?.rejected) ? delivery.info.rejected.length : undefined,
+    transport: delivery.transport,
     ...artifacts
   };
 }
@@ -798,7 +890,10 @@ app.get('/api/payment/config', (req, res) => {
 
 app.get('/api/email/status', async (req, res) => {
   const status = {
-    configured: SMTP_CONFIGURED,
+    configured: EMAIL_CONFIGURED,
+    provider: RESEND_CONFIGURED ? 'resend' : SMTP_CONFIGURED ? 'smtp' : null,
+    resendConfigured: RESEND_CONFIGURED,
+    resendFromConfigured: Boolean(process.env.RESEND_FROM || process.env.EMAIL_FROM || process.env.SMTP_FROM),
     hostConfigured: Boolean(process.env.SMTP_HOST),
     userConfigured: Boolean(process.env.SMTP_USER),
     passwordConfigured: Boolean(process.env.SMTP_PASS),
@@ -806,9 +901,11 @@ app.get('/api/email/status', async (req, res) => {
     reservationBccConfigured: Boolean(process.env.RESERVATION_BCC || RESERVATIONS_EMAIL)
   };
 
-  if (req.query.verify === 'true' && SMTP_CONFIGURED) {
+  if (req.query.verify === 'true' && EMAIL_CONFIGURED) {
     try {
-      const verifiedTransport = await verifySmtpTransport();
+      const verifiedTransport = RESEND_CONFIGURED
+        ? await verifyResendApi()
+        : await verifySmtpTransport();
       status.verified = true;
       status.verifiedTransport = verifiedTransport;
     } catch (error) {

@@ -27,6 +27,10 @@ services:
         value: "false"
       - key: SMTP_TIMEOUT_MS
         value: "15000"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM
+        value: Villa Maris Tiburon <reservations@villamaristiburon.com>
       - key: SMTP_USER
         sync: false
       - key: SMTP_PASS
