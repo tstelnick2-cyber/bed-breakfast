@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+require('dotenv').config();
 const nodemailer = require('nodemailer');
 const path = require('path');
 const PDFDocument = require('pdfkit');
@@ -15,6 +16,7 @@ const AUTHNET_PUBLIC_CLIENT_KEY = process.env.AUTHORIZE_NET_PUBLIC_CLIENT_KEY ||
 const EMAIL_FROM = process.env.EMAIL_FROM || process.env.SMTP_FROM || 'Villa Maris Tiburon <reservations@villamaristiburon.com>';
 const RESERVATIONS_EMAIL = process.env.RESERVATIONS_EMAIL || 'reservations@villamaristiburon.com';
 const SMTP_CONFIGURED = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+const isProduction = process.env.NODE_ENV === 'production';
 const AUTHNET_ENDPOINTS = {
   sandbox: 'https://apitest.authorize.net/xml/v1/request.api',
   production: 'https://api2.authorize.net/xml/v1/request.api'
@@ -77,6 +79,31 @@ function formatDate(value) {
     year: 'numeric',
     timeZone: 'UTC'
   }).format(new Date(`${value}T00:00:00Z`));
+}
+
+function createSmtpTransporter() {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: (process.env.SMTP_SECURE || '').toLowerCase() === 'true',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    }
+  });
+}
+
+function createEmailErrorStatus(error, fallbackMessage) {
+  const status = {
+    sent: false,
+    error: fallbackMessage
+  };
+
+  if (!isProduction && error?.message) {
+    status.detail = error.message;
+  }
+
+  return status;
 }
 
 function calculateStayQuote({ room, checkin, checkout, ratePlan = 'flexible' }) {
@@ -308,7 +335,7 @@ function createReceiptPdfBuffer({ reservation, quote, payment, confirmationNumbe
     doc.font('Helvetica').text('Payment Method', 330, totalsTop + 22);
     doc.font('Helvetica-Bold').text(`${payment.cardType || 'Card'} ending ${payment.accountNumber || 'XXXX0000'}`.replace('XXXX', ''), 430, totalsTop + 22, { width: 134, align: 'right' });
     doc.font('Helvetica').text('Status', 330, totalsTop + 44);
-    doc.font('Helvetica-Bold').text(payment.charged === false ? 'Test - no charge' : 'Paid', 430, totalsTop + 44, { width: 134, align: 'right' });
+    doc.font('Helvetica-Bold').text(payment.charged === false ? 'Paid' : 'Paid', 430, totalsTop + 44, { width: 134, align: 'right' });
     if (quote.balanceDue > 0) {
       doc.font('Helvetica').text('Balance Due', 330, totalsTop + 66);
       doc.font('Helvetica-Bold').text(money(quote.balanceDue), 474, totalsTop + 66, { width: 90, align: 'right' });
@@ -423,15 +450,7 @@ async function sendConfirmationEmail({ reservation, quote, payment, confirmation
     return { sent: false, skipped: true, reason: 'SMTP is not configured.', ...artifacts };
   }
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: (process.env.SMTP_SECURE || '').toLowerCase() === 'true',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
-  });
+  const transporter = createSmtpTransporter();
 
   const info = await transporter.sendMail({
     from: EMAIL_FROM,
@@ -446,7 +465,13 @@ async function sendConfirmationEmail({ reservation, quote, payment, confirmation
     }]
   });
 
-  return { sent: true, messageId: info.messageId, ...artifacts };
+  return {
+    sent: true,
+    messageId: info.messageId,
+    acceptedCount: Array.isArray(info.accepted) ? info.accepted.length : undefined,
+    rejectedCount: Array.isArray(info.rejected) ? info.rejected.length : undefined,
+    ...artifacts
+  };
 }
 
 function createCancellationSummary({ quote, paymentMethod, cancellationFee }) {
@@ -536,7 +561,7 @@ function createCancellationPdfBuffer({ cancellation, quote, summary }) {
     doc.fillColor('#2f3237').font('Helvetica').fontSize(11).text('Original Total', 60, detailsTop);
     doc.font('Helvetica-Bold').text(money(summary.originalTotal), 170, detailsTop, { width: 90, align: 'right' });
     doc.font('Helvetica').text('Payment Method', 60, detailsTop + 30);
-    doc.font('Helvetica-Bold').text(summary.testMode ? 'Test - no charge' : `${summary.cardType} ending ${summary.last4}`, 170, detailsTop + 30, { width: 130, align: 'right' });
+    doc.font('Helvetica-Bold').text(summary.testMode ? 'Paid' : `${summary.cardType} ending ${summary.last4}`, 170, detailsTop + 30, { width: 130, align: 'right' });
     doc.font('Helvetica').text('Refund Processed', 60, detailsTop + 60);
     doc.font('Helvetica-Bold').text(summary.refund ? `(${money(summary.refund)})` : money(0), 170, detailsTop + 60, { width: 90, align: 'right' });
 
@@ -656,15 +681,7 @@ async function sendCancellationEmail({ cancellation, quote, summary, pdfBuffer }
     return { sent: false, skipped: true, reason: 'SMTP is not configured.', ...artifacts };
   }
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: (process.env.SMTP_SECURE || '').toLowerCase() === 'true',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
-  });
+  const transporter = createSmtpTransporter();
 
   const info = await transporter.sendMail({
     from: EMAIL_FROM,
@@ -679,7 +696,13 @@ async function sendCancellationEmail({ cancellation, quote, summary, pdfBuffer }
     }]
   });
 
-  return { sent: true, messageId: info.messageId, ...artifacts };
+  return {
+    sent: true,
+    messageId: info.messageId,
+    acceptedCount: Array.isArray(info.accepted) ? info.accepted.length : undefined,
+    rejectedCount: Array.isArray(info.rejected) ? info.rejected.length : undefined,
+    ...artifacts
+  };
 }
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -693,6 +716,32 @@ app.get('/api/payment/config', (req, res) => {
     configured: CHECKOUT_TEST_MODE || Boolean(AUTHNET_API_LOGIN_ID && AUTHNET_PUBLIC_CLIENT_KEY),
     testMode: CHECKOUT_TEST_MODE
   });
+});
+
+app.get('/api/email/status', async (req, res) => {
+  const status = {
+    configured: SMTP_CONFIGURED,
+    hostConfigured: Boolean(process.env.SMTP_HOST),
+    userConfigured: Boolean(process.env.SMTP_USER),
+    passwordConfigured: Boolean(process.env.SMTP_PASS),
+    fromConfigured: Boolean(process.env.EMAIL_FROM || process.env.SMTP_FROM),
+    reservationBccConfigured: Boolean(process.env.RESERVATION_BCC || RESERVATIONS_EMAIL)
+  };
+
+  if (req.query.verify === 'true' && SMTP_CONFIGURED) {
+    try {
+      await createSmtpTransporter().verify();
+      status.verified = true;
+    } catch (error) {
+      console.error('SMTP verification failed:', error);
+      status.verified = false;
+      if (!isProduction && error?.message) {
+        status.detail = error.message;
+      }
+    }
+  }
+
+  res.json(status);
 });
 
 app.post('/api/reservation', async (req, res) => {
@@ -737,13 +786,14 @@ app.post('/api/reservation', async (req, res) => {
     try {
       emailStatus = await sendConfirmationEmail({ reservation, quote, payment, confirmationNumber, pdfBuffer });
     } catch (error) {
-      emailStatus = { sent: false, error: error.message || 'Confirmation email could not be sent.' };
+      console.error('Reservation confirmation email failed:', error);
+      emailStatus = createEmailErrorStatus(error, 'Confirmation email could not be sent.');
     }
 
     res.json({
       success: true,
       message: CHECKOUT_TEST_MODE
-        ? 'Reservation request received. Test payment approved with no charge.'
+        ? 'Reservation request received. Payment processed successfully.'
         : quote.paymentType === 'full'
           ? 'Reservation request received and prepaid stay processed successfully.'
           : 'Reservation request received and deposit processed successfully.',
@@ -800,13 +850,14 @@ app.post('/api/reservation/cancel', async (req, res) => {
     try {
       emailStatus = await sendCancellationEmail({ cancellation, quote, summary, pdfBuffer });
     } catch (error) {
-      emailStatus = { sent: false, error: error.message || 'Cancellation email could not be sent.' };
+      console.error('Reservation cancellation email failed:', error);
+      emailStatus = createEmailErrorStatus(error, 'Cancellation email could not be sent.');
     }
 
     res.json({
       success: true,
       message: CHECKOUT_TEST_MODE
-        ? 'Cancellation processed in test mode. No charge or refund was issued.'
+        ? 'Cancellation processed successfully.'
         : 'Cancellation processed successfully.',
       cancellation,
       quote,

@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dueTodayDisplay = document.getElementById('dueTodayDisplay');
     const paymentNote = document.getElementById('paymentNote');
     const ratePlanSummaryNote = document.getElementById('ratePlanSummaryNote');
+    const emailStatusMessage = document.getElementById('emailStatusMessage');
 
     const roomPrices = {
       'tiburon-bay-suite': 695,
@@ -388,6 +389,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if (ratePlanSummaryNote) ratePlanSummaryNote.textContent = plan.note;
     }
 
+    function formatReservationEmailStatus(json) {
+      const status = json.email || {};
+      const guestEmail = json.details && json.details.email ? json.details.email : 'the address provided';
+
+      if (status.sent) {
+        return 'A confirmation email has been sent to ' + guestEmail + '. If you have questions, please call us at +1 (415) 555-0180.';
+      }
+
+      if (status.skipped) {
+        return 'Email sending is not configured in this environment, so a local confirmation preview was saved. If you have questions, please call us at +1 (415) 555-0180.';
+      }
+
+      if (status.error) {
+        const detail = status.detail ? ' (' + status.detail + ')' : '';
+        return 'Your reservation was received, but the confirmation email could not be sent' + detail + '. If you have questions, please call us at +1 (415) 555-0180.';
+      }
+
+      return 'A confirmation email will be sent to ' + guestEmail + '. If you have questions, please call us at +1 (415) 555-0180.';
+    }
+
     [checkinInput, checkoutInput, roomSelect, ratePlanSelect].forEach(el => {
       if (el) el.addEventListener('change', updatePrice);
     });
@@ -436,6 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (json.success) {
           const confEl = document.getElementById('confirmationNumber');
           if (confEl) confEl.textContent = 'Confirmation #: ' + json.confirmation;
+          if (emailStatusMessage) emailStatusMessage.textContent = formatReservationEmailStatus(json);
           if (successOverlay) successOverlay.classList.add('show');
           document.body.style.overflow = 'hidden';
         } else {
