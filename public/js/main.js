@@ -394,19 +394,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const guestEmail = json.details && json.details.email ? json.details.email : 'the address provided';
 
       if (status.sent) {
-        return 'A confirmation email has been sent to ' + guestEmail + '. If you have questions, please call us at +1 (415) 555-0180.';
+        return 'A confirmation email has been sent to ' + guestEmail + '. If you have questions, please call us at +1 (415) 903-9590.';
       }
 
       if (status.skipped) {
-        return 'Email sending is not configured in this environment, so a local confirmation preview was saved. If you have questions, please call us at +1 (415) 555-0180.';
+        return 'Email sending is not configured in this environment, so a local confirmation preview was saved. If you have questions, please call us at +1 (415) 903-9590.';
       }
 
       if (status.error) {
         const detail = status.detail ? ' (' + status.detail + ')' : '';
-        return 'Your reservation was received, but the confirmation email could not be sent' + detail + '. If you have questions, please call us at +1 (415) 555-0180.';
+        return 'Your reservation was received, but the confirmation email could not be sent' + detail + '. If you have questions, please call us at +1 (415) 903-9590.';
       }
 
-      return 'A confirmation email will be sent to ' + guestEmail + '. If you have questions, please call us at +1 (415) 555-0180.';
+      return 'A confirmation email will be sent to ' + guestEmail + '. If you have questions, please call us at +1 (415) 903-9590.';
     }
 
     [checkinInput, checkoutInput, roomSelect, ratePlanSelect].forEach(el => {

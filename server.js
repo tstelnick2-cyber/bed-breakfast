@@ -542,7 +542,7 @@ function createReceiptPdfBuffer({ reservation, quote, payment, confirmationNumbe
 
     doc.moveTo(0, 700).lineTo(doc.page.width, 700).strokeColor(lightGray).stroke();
     doc.fillColor(gold).font('Times-Italic').fontSize(12).text('Thank you for letting us be part of your story.', 48, 720, { width: 516, align: 'center' });
-    doc.fillColor(navy).font('Helvetica').fontSize(9).text(`${RESERVATIONS_EMAIL} - (415) 555-0198`, 48, 740, { width: 516, align: 'center' });
+    doc.fillColor(navy).font('Helvetica').fontSize(9).text(`${RESERVATIONS_EMAIL} - (415) 903-9590`, 48, 740, { width: 516, align: 'center' });
     doc.fillColor(gray).font('Helvetica').fontSize(8).text('VILLA MARIS TIBURON | A PRIVATE LUXURY GUEST ESTATE', 48, 757, { width: 516, align: 'center', characterSpacing: 1 });
 
     doc.end();
@@ -623,7 +623,7 @@ function createConfirmationEmailHtml({ reservation, quote, payment, confirmation
             <tr>
               <td style="padding:20px 38px;background:#f8f6f1;text-align:center;color:#777;font-size:12px;line-height:1.6;">
                 75 Rolling Hills Rd, Tiburon, CA 94920<br>
-                ${RESERVATIONS_EMAIL} - (415) 555-0198
+                ${RESERVATIONS_EMAIL} - (415) 903-9590
               </td>
             </tr>
           </table>
@@ -704,7 +704,7 @@ function createCancellationSummary({ quote, paymentMethod, cancellationFee }) {
   };
 }
 
-function createCancellationPdfBuffer({ cancellation, quote, summary }) {
+function createCancellationPdfBuffer({ cancellation, quote, summary, cancelledOn }) {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'LETTER',
@@ -722,7 +722,9 @@ function createCancellationPdfBuffer({ cancellation, quote, summary }) {
     const lightGray = '#e7e7e7';
     const roomName = ROOM_NAMES[cancellation.room] || cancellation.room;
     const guestName = `${cancellation.firstName} ${cancellation.lastName}`.trim();
-    const cancelledDate = formatDate(new Date().toISOString().slice(0, 10));
+    const cancelledDate = cancelledOn && /^\d{4}-\d{2}-\d{2}$/.test(cancelledOn)
+      ? formatDate(cancelledOn)
+      : formatDate(new Date().toISOString().slice(0, 10));
 
     doc.rect(0, 0, doc.page.width, 8).fill(navy);
     doc.rect(doc.page.width - 210, 0, 210, 8).fill(gold);
@@ -790,7 +792,7 @@ function createCancellationPdfBuffer({ cancellation, quote, summary }) {
 
     doc.moveTo(0, 700).lineTo(doc.page.width, 700).strokeColor(lightGray).stroke();
     doc.fillColor(gold).font('Times-Italic').fontSize(12).text('We hope to welcome you another time.', 48, 720, { width: 516, align: 'center' });
-    doc.fillColor(navy).font('Helvetica').fontSize(9).text(`${RESERVATIONS_EMAIL} - (415) 555-0198`, 48, 740, { width: 516, align: 'center' });
+    doc.fillColor(navy).font('Helvetica').fontSize(9).text(`${RESERVATIONS_EMAIL} - (415) 903-9590`, 48, 740, { width: 516, align: 'center' });
     doc.fillColor(gray).font('Helvetica').fontSize(8).text('VILLA MARIS TIBURON | A PRIVATE LUXURY GUEST ESTATE', 48, 757, { width: 516, align: 'center', characterSpacing: 1 });
 
     doc.end();
@@ -863,7 +865,7 @@ function createCancellationEmailHtml({ cancellation, quote, summary }) {
             <tr>
               <td style="padding:20px 38px;background:#f8f6f1;text-align:center;color:#777;font-size:12px;line-height:1.6;">
                 75 Rolling Hills Rd, Tiburon, CA 94920<br>
-                ${RESERVATIONS_EMAIL} - (415) 555-0198
+                ${RESERVATIONS_EMAIL} - (415) 903-9590
               </td>
             </tr>
           </table>
@@ -1051,7 +1053,8 @@ app.post('/api/reservation/cancel', async (req, res) => {
     checkout,
     reason,
     cancellationFee,
-    paymentMethod
+    paymentMethod,
+    cancelledOn
   } = req.body;
 
   if (!confirmationNumber || !firstName || !lastName || !email || !room || !checkin || !checkout) {
@@ -1073,7 +1076,7 @@ app.post('/api/reservation/cancel', async (req, res) => {
       reason
     };
     const summary = createCancellationSummary({ quote, paymentMethod, cancellationFee });
-    const pdfBuffer = await createCancellationPdfBuffer({ cancellation, quote, summary });
+    const pdfBuffer = await createCancellationPdfBuffer({ cancellation, quote, summary, cancelledOn });
     let emailStatus;
 
     try {
