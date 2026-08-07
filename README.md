@@ -76,13 +76,15 @@ RESERVATION_BCC=reservations@villamaristiburon.com
 
 If email sending is not configured, the app still completes test reservations and writes preview files to `output/reservations/`.
 
-Cancellation confirmations use the same SMTP settings. Guests can submit cancellations at:
+Reservation management is available at:
 
 ```bash
 http://localhost:5000/cancel-reservation.html
 ```
 
-If SMTP is not configured, cancellation email and PDF previews are written to `output/cancellations/`.
+Guests authenticate with their booking reference and reservation email, then can update guest/stay details or cancel the reservation. Reservation records are stored in `ARTIFACT_STORAGE_DIR/reservations.json`; the Render deployment maps that directory to its persistent disk.
+
+Cancellation confirmations use the same email settings. The cancellation email includes the generated PDF receipt as an attachment. If email is not configured, the cancellation email HTML and PDF previews are written to `output/cancellations/` and returned in the API response for verification.
 
 ## Docker
 

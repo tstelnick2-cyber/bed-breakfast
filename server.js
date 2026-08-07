@@ -7,8 +7,9 @@ const PDFDocument = require('pdfkit');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const isProduction = process.env.NODE_ENV === 'production';
 
-const CHECKOUT_TEST_MODE = (process.env.CHECKOUT_TEST_MODE || 'true').toLowerCase() !== 'false';
+const CHECKOUT_TEST_MODE = (process.env.CHECKOUT_TEST_MODE || (isProduction ? 'false' : 'true')).toLowerCase() !== 'false';
 const AUTHNET_ENV = (process.env.AUTHORIZE_NET_ENV || process.env.AUTHNET_ENV || 'sandbox').toLowerCase();
 const AUTHNET_API_LOGIN_ID = process.env.AUTHORIZE_NET_API_LOGIN_ID || process.env.AUTHNET_API_LOGIN_ID || '';
 const AUTHNET_TRANSACTION_KEY = process.env.AUTHORIZE_NET_TRANSACTION_KEY || process.env.AUTHNET_TRANSACTION_KEY || '';
@@ -17,7 +18,109 @@ const EMAIL_FROM = process.env.RESEND_FROM || process.env.EMAIL_FROM || process.
 const RESERVATIONS_EMAIL = process.env.RESERVATIONS_EMAIL || 'reservations@villamaristiburon.com';
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
 const SMTP_TIMEOUT_MS = Number(process.env.SMTP_TIMEOUT_MS || 15000);
-const isProduction = process.env.NODE_ENV === 'production';
+const ARTIFACT_STORAGE_DIR = path.resolve(process.env.ARTIFACT_STORAGE_DIR || path.join(__dirname, 'output'));
+const RESERVATION_STORE_PATH = path.join(ARTIFACT_STORAGE_DIR, 'reservations.json');
+let reservationStoreQueue = Promise.resolve();
+
+function normalizeConfirmationNumber(value = '') {
+  return String(value).trim().replace(/^#/, '').toUpperCase();
+}
+
+function normalizeEmail(value = '') {
+  return String(value).trim().toLowerCase();
+}
+
+function createConfirmationNumber() {
+  return `VM-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+}
+
+function getPaymentMethod(payment = {}) {
+  const accountNumber = String(payment.accountNumber || '');
+  return {
+    cardType: payment.cardType || 'Card',
+    last4: accountNumber.replace(/\D/g, '').slice(-4) || '0000'
+  };
+}
+
+async function readReservationRecords() {
+  try {
+    const contents = await fs.promises.readFile(RESERVATION_STORE_PATH, 'utf8');
+    const records = JSON.parse(contents);
+    return Array.isArray(records) ? records : [];
+  } catch (error) {
+    if (error.code === 'ENOENT') return [];
+    throw error;
+  }
+}
+
+async function updateReservationRecords(mutator) {
+  const operation = reservationStoreQueue.then(async () => {
+    const records = await readReservationRecords();
+    const result = await mutator(records);
+    await fs.promises.mkdir(ARTIFACT_STORAGE_DIR, { recursive: true });
+    const temporaryPath = `${RESERVATION_STORE_PATH}.${process.pid}.tmp`;
+    await fs.promises.writeFile(temporaryPath, JSON.stringify(records, null, 2));
+    await fs.promises.rename(temporaryPath, RESERVATION_STORE_PATH);
+    return result;
+  });
+
+  reservationStoreQueue = operation.catch(() => undefined);
+  return operation;
+}
+
+async function findReservation({ confirmationNumber, email }) {
+  await reservationStoreQueue;
+  const records = await readReservationRecords();
+  const normalizedConfirmation = normalizeConfirmationNumber(confirmationNumber);
+  const normalizedGuestEmail = normalizeEmail(email);
+  return records.find(record =>
+    normalizeConfirmationNumber(record.confirmationNumber) === normalizedConfirmation &&
+    normalizeEmail(record.reservation?.email) === normalizedGuestEmail
+  );
+}
+
+function publicReservation(record) {
+  if (!record) return null;
+  return {
+    confirmationNumber: record.confirmationNumber,
+    status: record.status,
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+    cancelledAt: record.cancelledAt,
+    cancellation: record.cancellation,
+    details: record.reservation,
+    quote: record.quote,
+    paymentMethod: record.paymentMethod
+  };
+}
+
+async function saveReservationRecord({ confirmationNumber, reservation, quote, payment }) {
+  const now = new Date().toISOString();
+  const record = {
+    confirmationNumber,
+    status: 'confirmed',
+    createdAt: now,
+    updatedAt: now,
+    reservation,
+    quote,
+    paymentMethod: getPaymentMethod(payment)
+  };
+
+  await updateReservationRecords(records => {
+    records.push(record);
+  });
+  return record;
+}
+
+async function updateReservationRecord(confirmationNumber, updater) {
+  return updateReservationRecords(records => {
+    const record = records.find(item => normalizeConfirmationNumber(item.confirmationNumber) === normalizeConfirmationNumber(confirmationNumber));
+    if (!record) return null;
+    const updated = updater(record) || record;
+    updated.updatedAt = new Date().toISOString();
+    return updated;
+  });
+}
 
 function getEmailConfigurationStatus(env = process.env) {
   const resendApiKey = (env.RESEND_API_KEY || '').trim();
@@ -89,6 +192,7 @@ const RATE_PLANS = {
 };
 
 const CA_TAX_RATE = 0.12;
+const CANCELLATION_FREE_WINDOW_DAYS = 14;
 
 const ROOM_NAMES = {
   'tiburon-bay-suite': 'The Tiburon Bay Suite',
@@ -123,6 +227,16 @@ function formatDate(value) {
     year: 'numeric',
     timeZone: 'UTC'
   }).format(new Date(`${value}T00:00:00Z`));
+}
+
+function getIsoDate(value = new Date().toISOString().slice(0, 10)) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value || '') ? value : new Date().toISOString().slice(0, 10);
+}
+
+function getDaysBeforeCheckin(checkin, cancelledOn) {
+  const checkinDate = new Date(`${checkin}T00:00:00Z`);
+  const cancelledDate = new Date(`${getIsoDate(cancelledOn)}T00:00:00Z`);
+  return Math.round((checkinDate - cancelledDate) / (1000 * 60 * 60 * 24));
 }
 
 function createSmtpTransporter({ port = Number(process.env.SMTP_PORT || 587), secure = (process.env.SMTP_SECURE || '').toLowerCase() === 'true' } = {}) {
@@ -635,13 +749,13 @@ function createConfirmationEmailHtml({ reservation, quote, payment, confirmation
 }
 
 async function saveReservationArtifacts({ confirmationNumber, pdfBuffer, emailHtml }) {
-  const outputDir = path.join(__dirname, 'output', 'reservations');
+  const outputDir = path.join(ARTIFACT_STORAGE_DIR, 'reservations');
   await fs.promises.mkdir(outputDir, { recursive: true });
   const pdfPath = path.join(outputDir, `${confirmationNumber}.pdf`);
   const emailPath = path.join(outputDir, `${confirmationNumber}.html`);
   await fs.promises.writeFile(pdfPath, pdfBuffer);
   await fs.promises.writeFile(emailPath, emailHtml);
-  return { pdfPath, emailPath };
+  return { pdfPath, emailPath, artifactStorageDir: outputDir };
 }
 
 async function sendConfirmationEmail({ reservation, quote, payment, confirmationNumber, pdfBuffer }) {
@@ -685,10 +799,18 @@ async function sendConfirmationEmail({ reservation, quote, payment, confirmation
   };
 }
 
-function createCancellationSummary({ quote, paymentMethod, cancellationFee }) {
+function createCancellationSummary({ quote, paymentMethod, cancellationFee, checkin, cancelledOn }) {
   const originalTotal = quote.total;
-  const retained = CHECKOUT_TEST_MODE ? 0 : Math.max(0, Number(cancellationFee || 0));
   const paidAmount = CHECKOUT_TEST_MODE ? 0 : quote.amountDue;
+  const effectiveCancelledOn = getIsoDate(cancelledOn);
+  const daysBeforeCheckin = getDaysBeforeCheckin(checkin, effectiveCancelledOn);
+  const refundable = daysBeforeCheckin >= CANCELLATION_FREE_WINDOW_DAYS;
+  const requestedRetention = Math.max(0, Number(cancellationFee || 0));
+  const retained = CHECKOUT_TEST_MODE
+    ? 0
+    : refundable
+      ? Math.min(paidAmount, requestedRetention)
+      : paidAmount;
   const refund = Math.max(0, paidAmount - retained);
   const cardType = paymentMethod?.cardType || 'Card';
   const last4 = paymentMethod?.last4 || '0000';
@@ -698,9 +820,13 @@ function createCancellationSummary({ quote, paymentMethod, cancellationFee }) {
     paidAmount,
     retained,
     refund,
+    refundStatus: CHECKOUT_TEST_MODE ? 'not_applicable' : refundable ? 'pending_manual' : 'not_eligible',
     cardType,
     last4,
-    testMode: CHECKOUT_TEST_MODE
+    testMode: CHECKOUT_TEST_MODE,
+    refundable,
+    daysBeforeCheckin,
+    cancelledOn: effectiveCancelledOn
   };
 }
 
@@ -722,9 +848,7 @@ function createCancellationPdfBuffer({ cancellation, quote, summary, cancelledOn
     const lightGray = '#e7e7e7';
     const roomName = ROOM_NAMES[cancellation.room] || cancellation.room;
     const guestName = `${cancellation.firstName} ${cancellation.lastName}`.trim();
-    const cancelledDate = cancelledOn && /^\d{4}-\d{2}-\d{2}$/.test(cancelledOn)
-      ? formatDate(cancelledOn)
-      : formatDate(new Date().toISOString().slice(0, 10));
+    const cancelledDate = formatDate(getIsoDate(cancelledOn || summary.cancelledOn));
 
     doc.rect(0, 0, doc.page.width, 8).fill(navy);
     doc.rect(doc.page.width - 210, 0, 210, 8).fill(gold);
@@ -764,8 +888,13 @@ function createCancellationPdfBuffer({ cancellation, quote, summary, cancelledOn
     doc.moveTo(48, tableTop + 22).lineTo(564, tableTop + 22).strokeColor(navy).stroke();
 
     const lineY = tableTop + 42;
+    const policyText = summary.testMode
+      ? 'Test-mode cancellation - no payment was captured'
+      : summary.refundable
+        ? `Cancelled ${summary.daysBeforeCheckin} days before check-in - refund allowed by policy`
+        : `Cancelled ${Math.max(0, summary.daysBeforeCheckin)} days before check-in - non-refundable under policy`;
     doc.fillColor(navy).font('Helvetica-Bold').fontSize(11).text('Reservation Cancellation', 60, lineY);
-    doc.fillColor(gray).font('Helvetica').fontSize(9).text(summary.testMode ? 'Test-mode cancellation - no payment was captured' : 'Cancellation processed per property policy', 60, lineY + 17, { width: 230 });
+    doc.fillColor(gray).font('Helvetica').fontSize(9).text(policyText, 60, lineY + 17, { width: 230 });
     doc.fillColor('#2f3237').fontSize(10).text(money(summary.originalTotal), 320, lineY, { width: 95, align: 'right' });
     doc.text(summary.refund ? `(${money(summary.refund)})` : money(0), 430, lineY, { width: 70, align: 'right' });
     doc.text(money(summary.retained), 512, lineY, { width: 52, align: 'right' });
@@ -775,7 +904,7 @@ function createCancellationPdfBuffer({ cancellation, quote, summary, cancelledOn
     doc.font('Helvetica-Bold').text(money(summary.originalTotal), 170, detailsTop, { width: 90, align: 'right' });
     doc.font('Helvetica').text('Payment Method', 60, detailsTop + 30);
     doc.font('Helvetica-Bold').text(summary.testMode ? 'Paid' : `${summary.cardType} ending ${summary.last4}`, 170, detailsTop + 30, { width: 130, align: 'right' });
-    doc.font('Helvetica').text('Refund Processed', 60, detailsTop + 60);
+    doc.font('Helvetica').text('Refund Due', 60, detailsTop + 60);
     doc.font('Helvetica-Bold').text(summary.refund ? `(${money(summary.refund)})` : money(0), 170, detailsTop + 60, { width: 90, align: 'right' });
 
     doc.fillColor(navy).rect(330, detailsTop, 190, 40).fill();
@@ -783,12 +912,18 @@ function createCancellationPdfBuffer({ cancellation, quote, summary, cancelledOn
     doc.text(money(summary.retained), 426, detailsTop + 14, { width: 78, align: 'right' });
 
     doc.fillColor(gold).font('Helvetica-Bold').fontSize(9).text('CANCELLATION NOTE', 48, 590, { characterSpacing: 1.2 });
-    const note = cancellation.reason
-      ? `Cancellation reason: ${cancellation.reason}`
-      : summary.testMode
-        ? 'This test-mode cancellation confirms the reservation has been marked cancelled. No payment was captured and no refund is due.'
-        : 'Funds processed for refund should appear in your account within 5-10 business days depending on your financial institution.';
-    doc.fillColor(gray).font('Helvetica').fontSize(9).text(note, 48, 610, { width: 516, lineGap: 2 });
+    const noteParts = [];
+    if (cancellation.reason) {
+      noteParts.push(`Cancellation reason: ${cancellation.reason}`);
+    }
+    if (summary.testMode) {
+      noteParts.push('This test-mode cancellation confirms the reservation has been marked cancelled. No payment was captured and no refund is due.');
+    } else if (summary.refundable) {
+      noteParts.push('This cancellation qualified for a refund under the 14-day policy. The refundable amount shown is due back to the original payment method.');
+    } else {
+      noteParts.push('This cancellation occurred within 14 days of check-in and is non-refundable under the property policy.');
+    }
+    doc.fillColor(gray).font('Helvetica').fontSize(9).text(noteParts.join(' '), 48, 610, { width: 516, lineGap: 2 });
 
     doc.moveTo(0, 700).lineTo(doc.page.width, 700).strokeColor(lightGray).stroke();
     doc.fillColor(gold).font('Times-Italic').fontSize(12).text('We hope to welcome you another time.', 48, 720, { width: 516, align: 'center' });
@@ -802,6 +937,11 @@ function createCancellationPdfBuffer({ cancellation, quote, summary, cancelledOn
 function createCancellationEmailHtml({ cancellation, quote, summary }) {
   const roomName = ROOM_NAMES[cancellation.room] || cancellation.room;
   const guestName = `${cancellation.firstName} ${cancellation.lastName}`.trim();
+  const statusMessage = summary.testMode
+    ? 'This test-mode cancellation has been recorded. No payment was captured and no refund is due.'
+    : summary.refundable
+      ? `This cancellation qualifies for a refund under our ${CANCELLATION_FREE_WINDOW_DAYS}-day policy. The refundable amount shown below is due back to the original payment method.`
+      : `This cancellation falls within ${CANCELLATION_FREE_WINDOW_DAYS} days of check-in and is non-refundable under our policy.`;
   return `<!doctype html>
 <html>
   <body style="margin:0;background:#f5f2ec;font-family:Arial,Helvetica,sans-serif;color:#26313d;">
@@ -820,7 +960,7 @@ function createCancellationEmailHtml({ cancellation, quote, summary }) {
               <td style="padding:8px 38px 26px;">
                 <h1 style="font-family:Georgia,serif;font-size:30px;line-height:1.15;color:#173b60;margin:0 0 14px;">Your reservation has been cancelled</h1>
                 <p style="font-size:15px;line-height:1.7;margin:0;color:#4a4f57;">Dear ${guestName},</p>
-                <p style="font-size:15px;line-height:1.7;margin:10px 0 0;color:#4a4f57;">We have processed the cancellation for your Villa Maris Tiburon reservation. A cancellation receipt is attached as a PDF for your records.</p>
+                <p style="font-size:15px;line-height:1.7;margin:10px 0 0;color:#4a4f57;">We have processed the cancellation for your Villa Maris Tiburon reservation. ${statusMessage} A cancellation receipt is attached as a PDF for your records.</p>
               </td>
             </tr>
             <tr>
@@ -846,7 +986,7 @@ function createCancellationEmailHtml({ cancellation, quote, summary }) {
                     <td style="padding:16px 18px;border-bottom:1px solid #eee;text-align:right;font-weight:bold;">${money(quote.total)}</td>
                   </tr>
                   <tr>
-                    <td style="padding:16px 18px;border-bottom:1px solid #eee;color:#7a6a49;font-size:12px;font-weight:bold;">Refund processed</td>
+                    <td style="padding:16px 18px;border-bottom:1px solid #eee;color:#7a6a49;font-size:12px;font-weight:bold;">Refund due</td>
                     <td style="padding:16px 18px;border-bottom:1px solid #eee;text-align:right;font-weight:bold;">${summary.refund ? money(summary.refund) : money(0)}</td>
                   </tr>
                   <tr>
@@ -877,13 +1017,13 @@ function createCancellationEmailHtml({ cancellation, quote, summary }) {
 }
 
 async function saveCancellationArtifacts({ confirmationNumber, pdfBuffer, emailHtml }) {
-  const outputDir = path.join(__dirname, 'output', 'cancellations');
+  const outputDir = path.join(ARTIFACT_STORAGE_DIR, 'cancellations');
   await fs.promises.mkdir(outputDir, { recursive: true });
   const pdfPath = path.join(outputDir, `${confirmationNumber}-cancellation.pdf`);
   const emailPath = path.join(outputDir, `${confirmationNumber}-cancellation.html`);
   await fs.promises.writeFile(pdfPath, pdfBuffer);
   await fs.promises.writeFile(emailPath, emailHtml);
-  return { pdfPath, emailPath };
+  return { pdfPath, emailPath, artifactStorageDir: outputDir };
 }
 
 async function sendCancellationEmail({ cancellation, quote, summary, pdfBuffer }) {
@@ -902,18 +1042,23 @@ async function sendCancellationEmail({ cancellation, quote, summary, pdfBuffer }
     return { sent: false, skipped: true, reason: diagnostic.reason, ...artifacts };
   }
 
-  const delivery = await sendEmailMessage({
-    from: EMAIL_FROM,
-    to: cancellation.email,
-    bcc: process.env.RESERVATION_BCC || RESERVATIONS_EMAIL,
-    subject: `Cancellation of your Villa Maris Tiburon reservation - ${cancellation.confirmationNumber}`,
-    html: emailHtml,
-    attachments: [{
-      filename: `Villa-Maris-Cancellation-${cancellation.confirmationNumber}.pdf`,
-      content: pdfBuffer,
-      contentType: 'application/pdf'
-    }]
-  });
+  let delivery;
+  try {
+    delivery = await sendEmailMessage({
+      from: EMAIL_FROM,
+      to: cancellation.email,
+      bcc: process.env.RESERVATION_BCC || RESERVATIONS_EMAIL,
+      subject: `Cancellation of your Villa Maris Tiburon reservation - ${cancellation.confirmationNumber}`,
+      html: emailHtml,
+      attachments: [{
+        filename: `Villa-Maris-Cancellation-${cancellation.confirmationNumber}.pdf`,
+        content: pdfBuffer,
+        contentType: 'application/pdf'
+      }]
+    });
+  } catch (error) {
+    return { ...createEmailErrorStatus(error, 'Cancellation email could not be sent.'), ...artifacts };
+  }
 
   const messageId = delivery.data?.id || delivery.info?.messageId;
   return {
@@ -953,7 +1098,9 @@ app.get('/api/email/status', async (req, res) => {
     userConfigured: Boolean(process.env.SMTP_USER),
     passwordConfigured: Boolean(process.env.SMTP_PASS),
     fromConfigured: Boolean(process.env.EMAIL_FROM || process.env.SMTP_FROM),
-    reservationBccConfigured: Boolean(process.env.RESERVATION_BCC || RESERVATIONS_EMAIL)
+    reservationBccConfigured: Boolean(process.env.RESERVATION_BCC || RESERVATIONS_EMAIL),
+    artifactStorageDir: ARTIFACT_STORAGE_DIR,
+    persistentArtifactStorageConfigured: Boolean((process.env.ARTIFACT_STORAGE_DIR || '').trim())
   };
 
   if (req.query.verify === 'true' && EMAIL_CONFIGURED) {
@@ -989,7 +1136,7 @@ app.post('/api/reservation', async (req, res) => {
 
   try {
     const quote = calculateStayQuote({ room, checkin, checkout, ratePlan });
-    const confirmationNumber = 'VM-' + Date.now().toString(36).toUpperCase();
+    const confirmationNumber = createConfirmationNumber();
     const reservation = {
       firstName,
       lastName,
@@ -1010,8 +1157,9 @@ app.post('/api/reservation', async (req, res) => {
         opaqueData,
         amount: quote.amountDue,
         confirmationNumber,
-        reservation
-      });
+          reservation
+        });
+    await saveReservationRecord({ confirmationNumber, reservation, quote, payment });
     const pdfBuffer = await createReceiptPdfBuffer({ reservation, quote, payment, confirmationNumber });
     let emailStatus;
     try {
@@ -1040,45 +1188,137 @@ app.post('/api/reservation', async (req, res) => {
   }
 });
 
-app.post('/api/reservation/cancel', async (req, res) => {
-  const {
-    confirmationNumber,
-    firstName,
-    lastName,
-    email,
-    phone,
-    room,
-    ratePlan = 'flexible',
-    checkin,
-    checkout,
-    reason,
-    cancellationFee,
-    paymentMethod,
-    cancelledOn
-  } = req.body;
-
-  if (!confirmationNumber || !firstName || !lastName || !email || !room || !checkin || !checkout) {
-    return res.status(400).json({ success: false, message: 'Missing required cancellation fields.' });
+app.post('/api/reservation/lookup', async (req, res) => {
+  const { confirmationNumber, email } = req.body || {};
+  if (!confirmationNumber || !email) {
+    return res.status(400).json({ success: false, message: 'Booking reference and guest email are required.' });
   }
 
   try {
-    const quote = calculateStayQuote({ room, checkin, checkout, ratePlan });
+    const record = await findReservation({ confirmationNumber, email });
+    if (!record) {
+      return res.status(404).json({ success: false, message: 'We could not find a reservation with that booking reference and email.' });
+    }
+    return res.json({ success: true, reservation: publicReservation(record) });
+  } catch (error) {
+    console.error('Reservation lookup failed:', error);
+    return res.status(500).json({ success: false, message: 'Reservation lookup is temporarily unavailable.' });
+  }
+});
+
+async function modifyReservation(req, res) {
+  const confirmationNumber = normalizeConfirmationNumber(req.params.confirmationNumber || req.body?.confirmationNumber);
+  const { email } = req.body || {};
+  if (!confirmationNumber || !email) {
+    return res.status(400).json({ success: false, message: 'Booking reference and guest email are required.' });
+  }
+
+  try {
+    const existing = await findReservation({ confirmationNumber, email });
+    if (!existing) {
+      return res.status(404).json({ success: false, message: 'We could not find a reservation with that booking reference and email.' });
+    }
+    if (existing.status === 'cancelled') {
+      return res.status(409).json({ success: false, message: 'This reservation has already been cancelled.' });
+    }
+
+    const current = existing.reservation;
+    const nextReservation = {
+      ...current,
+      firstName: req.body.firstName ?? current.firstName,
+      lastName: req.body.lastName ?? current.lastName,
+      phone: req.body.phone ?? current.phone,
+      country: req.body.country ?? current.country,
+      room: req.body.room ?? current.room,
+      ratePlan: req.body.ratePlan ?? current.ratePlan,
+      checkin: req.body.checkin ?? current.checkin,
+      checkout: req.body.checkout ?? current.checkout,
+      guests: req.body.guests ?? current.guests,
+      specialRequests: req.body.specialRequests ?? current.specialRequests,
+      addons: req.body.addons === undefined
+        ? current.addons
+        : Array.isArray(req.body.addons) ? req.body.addons : [req.body.addons]
+    };
+    const quote = calculateStayQuote(nextReservation);
+    const previousQuote = existing.quote || calculateStayQuote(current);
+    const updated = await updateReservationRecord(confirmationNumber, record => {
+      record.status = 'modified';
+      record.reservation = nextReservation;
+      record.quote = quote;
+      return record;
+    });
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'Reservation no longer exists.' });
+    }
+
+    const amountDueDelta = Number((quote.amountDue - previousQuote.amountDue).toFixed(2));
+    const totalDelta = Number((quote.total - previousQuote.total).toFixed(2));
+    return res.json({
+      success: true,
+      message: 'Reservation updated successfully.',
+      reservation: publicReservation(updated),
+      previousQuote,
+      paymentAdjustment: {
+        amountDueDelta,
+        totalDelta,
+        requiresFollowUp: amountDueDelta !== 0,
+        note: amountDueDelta > 0
+          ? 'The updated reservation requires an additional payment. Our team will contact you to collect the difference.'
+          : amountDueDelta < 0
+            ? 'The updated reservation has a lower amount due. Our team will contact you to process the difference.'
+            : 'No payment adjustment is required.'
+      }
+    });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+}
+
+app.put('/api/reservation/:confirmationNumber', modifyReservation);
+app.patch('/api/reservation/:confirmationNumber', modifyReservation);
+
+app.post('/api/reservation/cancel', async (req, res) => {
+  const { confirmationNumber, email, reason, cancelledOn } = req.body || {};
+  if (!confirmationNumber || !email) {
+    return res.status(400).json({ success: false, message: 'Booking reference and guest email are required.' });
+  }
+
+  try {
+    const normalizedConfirmation = normalizeConfirmationNumber(confirmationNumber);
+    const record = await findReservation({ confirmationNumber: normalizedConfirmation, email });
+    if (!record) {
+      return res.status(404).json({ success: false, message: 'We could not find a reservation with that booking reference and email.' });
+    }
+    if (record.status === 'cancelled') {
+      return res.status(409).json({ success: false, message: 'This reservation has already been cancelled.' });
+    }
+
+    const quote = record.quote || calculateStayQuote(record.reservation);
     const cancellation = {
-      confirmationNumber: confirmationNumber.replace(/^#/, ''),
-      firstName,
-      lastName,
-      email,
-      phone,
-      room,
-      ratePlan: quote.ratePlan,
-      checkin,
-      checkout,
+      confirmationNumber: record.confirmationNumber,
+      ...record.reservation,
       reason
     };
-    const summary = createCancellationSummary({ quote, paymentMethod, cancellationFee });
+    const paymentMethod = record.paymentMethod || getPaymentMethod(record.payment);
+    const summary = createCancellationSummary({
+      quote,
+      paymentMethod,
+      checkin: record.reservation.checkin,
+      cancelledOn
+    });
+    const updated = await updateReservationRecord(normalizedConfirmation, current => {
+      current.status = 'cancelled';
+      current.cancelledAt = summary.cancelledOn;
+      current.cancellation = { reason: reason || '', summary };
+      return current;
+    });
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'Reservation no longer exists.' });
+    }
+
     const pdfBuffer = await createCancellationPdfBuffer({ cancellation, quote, summary, cancelledOn });
     let emailStatus;
-
     try {
       emailStatus = await sendCancellationEmail({ cancellation, quote, summary, pdfBuffer });
     } catch (error) {
@@ -1088,9 +1328,7 @@ app.post('/api/reservation/cancel', async (req, res) => {
 
     res.json({
       success: true,
-      message: CHECKOUT_TEST_MODE
-        ? 'Cancellation processed successfully.'
-        : 'Cancellation processed successfully.',
+      message: 'Cancellation processed successfully.',
       cancellation,
       quote,
       summary,
@@ -1117,6 +1355,10 @@ if (!EMAIL_CONFIGURED) {
   console.warn('Reservation email dispatch is disabled. Configure RESEND_API_KEY or SMTP_HOST/SMTP_USER/SMTP_PASS in the deployment environment.');
 }
 
+if (isProduction && !(process.env.ARTIFACT_STORAGE_DIR || '').trim()) {
+  console.warn(`Artifact files are being written to ephemeral storage at ${ARTIFACT_STORAGE_DIR}. Set ARTIFACT_STORAGE_DIR to a persistent disk mount path in production.`);
+}
+
 if (require.main === module) {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Villa Maris Tiburon server running on port ${PORT}`);
@@ -1125,5 +1367,10 @@ if (require.main === module) {
 
 module.exports = {
   app,
-  getEmailConfigurationStatus
+  getEmailConfigurationStatus,
+  calculateStayQuote,
+  createCancellationSummary,
+  createCancellationPdfBuffer,
+  createCancellationEmailHtml,
+  normalizeConfirmationNumber
 };

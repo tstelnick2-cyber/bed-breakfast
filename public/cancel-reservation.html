@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cancel Reservation - Villa Maris Tiburon</title>
-  <meta name="description" content="Cancel a Villa Maris Tiburon reservation and receive a cancellation confirmation receipt.">
+  <title>Manage Reservation - Villa Maris Tiburon</title>
+  <meta name="description" content="Look up, modify, or cancel a Villa Maris Tiburon reservation.">
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -60,6 +60,32 @@
       line-height: 1.7;
     }
     .cancel-result.show { display: block; }
+    .manage-panel { display: none; }
+    .manage-panel.show { display: block; }
+    .reservation-card {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .reservation-card h3 {
+      color: var(--navy);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .reservation-meta { color: var(--text-mid); font-size: 0.82rem; line-height: 1.8; }
+    .manage-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .secondary-action {
+      border: 1px solid var(--navy);
+      color: var(--navy);
+      background: transparent;
+      padding: 0.9rem 1.2rem;
+      font: inherit;
+      cursor: pointer;
+    }
+    .danger-action { background: #7a2d2d; border-color: #7a2d2d; }
+    .form-help { color: var(--text-light); font-size: 0.75rem; line-height: 1.6; margin-top: 0.45rem; }
     @media (max-width: 900px) {
       .cancel-hero-strip { grid-template-columns: 1fr 1fr; height: 180px; }
       .cancel-grid { grid-template-columns: 1fr; }
@@ -113,13 +139,13 @@
     <div>
       <div style="margin-bottom:2.5rem;">
         <span class="section-eyebrow">Reservation Support</span>
-        <h1 class="section-title" style="font-size:2.5rem;">Cancel Reservation</h1>
+        <h1 class="section-title" style="font-size:2.5rem;">Manage Your Reservation</h1>
         <div class="gold-divider"></div>
-        <p style="font-size:0.88rem;color:var(--text-mid);line-height:1.8;font-weight:300;">Submit the reservation details below and we will issue a cancellation confirmation receipt to the guest email address on file.</p>
+        <p style="font-size:0.88rem;color:var(--text-mid);line-height:1.8;font-weight:300;">Look up your reservation with the booking reference and guest email. From there you can update your stay details or cancel it securely.</p>
       </div>
 
       <div class="reservation-form">
-        <form id="cancelReservationForm" novalidate>
+        <form id="lookupReservationForm" novalidate>
           <div class="form-section">
             <div class="form-row">
               <div class="form-group">
@@ -131,85 +157,60 @@
                 <input type="email" id="email" name="email" placeholder="guest@email.com" required>
               </div>
             </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="firstName">First Name *</label>
-                <input type="text" id="firstName" name="firstName" required>
-              </div>
-              <div class="form-group">
-                <label for="lastName">Last Name *</label>
-                <input type="text" id="lastName" name="lastName" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="phone">Phone Number</label>
-              <input type="tel" id="phone" name="phone" placeholder="+1 (415) 000-0000">
-            </div>
+            <p class="form-help">Use the email address from your original reservation confirmation.</p>
           </div>
-
-          <div class="form-section">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="checkin">Original Check-in *</label>
-                <input type="date" id="checkin" name="checkin" required>
-              </div>
-              <div class="form-group">
-                <label for="checkout">Original Check-out *</label>
-                <input type="date" id="checkout" name="checkout" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="room">Suite *</label>
-              <select id="room" name="room" required class="select-styled">
-                <option value="">Select a suite</option>
-                <option value="tiburon-bay-suite">The Tiburon Bay Suite</option>
-                <option value="golden-gate-vista">The Golden Gate Vista</option>
-                <option value="marin-sanctuary">The Marin Sanctuary</option>
-                <option value="alcatraz-suite">The Alcatraz Suite</option>
-                <option value="captains-quarters">The Captain's Quarters</option>
-                <option value="hillside-retreat">The Hillside Retreat</option>
-                <option value="marina-room">The Marina Room</option>
-                <option value="garden-bower">The Garden Bower</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="ratePlan">Original Rate Plan</label>
-              <select id="ratePlan" name="ratePlan" class="select-styled">
-                <option value="flexible">Flexible Rate</option>
-                <option value="prepaid">Prepaid Rate</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="cardType">Payment Card Type</label>
-                <select id="cardType" name="cardType" class="select-styled">
-                  <option value="Card">Card</option>
-                  <option value="Visa">Visa</option>
-                  <option value="Mastercard">Mastercard</option>
-                  <option value="American Express">American Express</option>
-                  <option value="Discover">Discover</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="last4">Card Last 4</label>
-                <input type="text" id="last4" name="last4" maxlength="4" inputmode="numeric" placeholder="4242">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="reason">Cancellation Note</label>
-              <textarea id="reason" name="reason" placeholder="Optional note for the cancellation receipt"></textarea>
-            </div>
-          </div>
-
-          <button type="submit" class="form-submit" id="cancelSubmitBtn">
-            <i class="fas fa-ban" style="margin-right:0.5rem;font-size:0.75rem;"></i>
-            Cancel Reservation
+          <button type="submit" class="form-submit" id="lookupSubmitBtn">
+            <i class="fas fa-search" style="margin-right:0.5rem;font-size:0.75rem;"></i>
+            Find Reservation
           </button>
-          <div class="cancel-result" id="cancelResult"></div>
+          <div class="cancel-result" id="manageResult" role="status"></div>
         </form>
+
+        <div class="manage-panel" id="managePanel">
+          <div class="reservation-card" id="reservationSummary"></div>
+          <form id="modifyReservationForm" novalidate>
+            <div class="form-section">
+              <h3 style="font-family:'Cormorant Garamond',serif;color:var(--navy);font-size:1.5rem;margin-bottom:1rem;">Update Reservation</h3>
+              <div class="form-row">
+                <div class="form-group"><label for="firstName">First Name *</label><input type="text" id="firstName" name="firstName" required></div>
+                <div class="form-group"><label for="lastName">Last Name *</label><input type="text" id="lastName" name="lastName" required></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone"></div>
+                <div class="form-group"><label for="country">Country</label><input type="text" id="country" name="country"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label for="checkin">Check-in *</label><input type="date" id="checkin" name="checkin" required></div>
+                <div class="form-group"><label for="checkout">Check-out *</label><input type="date" id="checkout" name="checkout" required></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="room">Suite *</label>
+                  <select id="room" name="room" required class="select-styled">
+                    <option value="">Select a suite</option>
+                    <option value="tiburon-bay-suite">The Tiburon Bay Suite</option><option value="golden-gate-vista">The Golden Gate Vista</option><option value="marin-sanctuary">The Marin Sanctuary</option><option value="alcatraz-suite">The Alcatraz Suite</option><option value="captains-quarters">The Captain's Quarters</option><option value="hillside-retreat">The Hillside Retreat</option><option value="marina-room">The Marina Room</option><option value="garden-bower">The Garden Bower</option>
+                  </select>
+                </div>
+                <div class="form-group"><label for="ratePlan">Rate Plan *</label><select id="ratePlan" name="ratePlan" class="select-styled"><option value="flexible">Flexible Rate</option><option value="prepaid">Prepaid Rate</option></select></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label for="guests">Guests</label><input type="number" id="guests" name="guests" min="1" max="16"></div>
+                <div class="form-group"><label for="specialRequests">Special Requests</label><input type="text" id="specialRequests" name="specialRequests"></div>
+              </div>
+              <p class="form-help">Changing dates, suite, or rate may change the amount due. Any payment difference will be handled by our reservations team.</p>
+            </div>
+            <button type="submit" class="form-submit" id="modifySubmitBtn"><i class="fas fa-pen" style="margin-right:0.5rem;font-size:0.75rem;"></i>Save Changes</button>
+          </form>
+
+          <div class="reservation-card" style="margin-top:1.5rem;">
+            <h3>Cancel Reservation</h3>
+            <p class="reservation-meta" style="margin-bottom:1rem;">Cancellation is free up to 14 days before check-in. Cancellations within 14 days are non-refundable under the property policy.</p>
+            <label for="reason" style="display:block;font-size:0.8rem;color:var(--text-mid);margin-bottom:0.45rem;">Cancellation note (optional)</label>
+            <textarea id="reason" name="reason" placeholder="Optional note for the cancellation receipt" style="width:100%;margin-bottom:1rem;"></textarea>
+            <button type="button" class="form-submit danger-action" id="cancelSubmitBtn"><i class="fas fa-ban" style="margin-right:0.5rem;font-size:0.75rem;"></i>Cancel Reservation</button>
+          </div>
+          <div class="cancel-result" id="cancelResult" role="status"></div>
+        </div>
       </div>
     </div>
 
@@ -262,55 +263,122 @@
 
 <script src="/js/main.js"></script>
 <script>
-  const cancelForm = document.getElementById('cancelReservationForm');
+  const lookupForm = document.getElementById('lookupReservationForm');
+  const modifyForm = document.getElementById('modifyReservationForm');
+  const managePanel = document.getElementById('managePanel');
+  const summary = document.getElementById('reservationSummary');
+  const manageResult = document.getElementById('manageResult');
   const cancelResult = document.getElementById('cancelResult');
+  const lookupBtn = document.getElementById('lookupSubmitBtn');
+  const modifyBtn = document.getElementById('modifySubmitBtn');
   const cancelBtn = document.getElementById('cancelSubmitBtn');
+  let activeReservation = null;
 
-  if (cancelForm) {
-    cancelForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (!cancelForm.checkValidity()) {
-        cancelForm.reportValidity();
-        return;
-      }
+  const money = value => Number(value || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  const date = value => value ? new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(value + 'T00:00:00Z')) : '—';
+  const field = id => document.getElementById(id);
 
-      cancelBtn.disabled = true;
-      cancelBtn.textContent = 'Processing...';
-      cancelResult.classList.remove('show');
-
-      try {
-        const data = Object.fromEntries(new FormData(cancelForm));
-        data.paymentMethod = {
-          cardType: data.cardType || 'Card',
-          last4: (data.last4 || '').replace(/\D/g, '').slice(-4)
-        };
-        delete data.cardType;
-        delete data.last4;
-
-        const response = await fetch('/api/reservation/cancel', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-        const json = await response.json();
-        if (!json.success) throw new Error(json.message || 'Cancellation could not be processed.');
-
-        cancelResult.innerHTML = '<strong style="color:var(--navy);">Cancellation processed.</strong><br>' +
-          'A cancellation receipt has been generated for booking #' + json.cancellation.confirmationNumber + '.';
-        if (json.email && json.email.skipped) {
-          cancelResult.innerHTML += '<br>Email sending is not configured, so a local email preview was saved.';
-        }
-        cancelResult.classList.add('show');
-        cancelForm.reset();
-      } catch (error) {
-        cancelResult.innerHTML = '<strong style="color:#7a2d2d;">Unable to process cancellation.</strong><br>' + (error.message || 'Please try again.');
-        cancelResult.classList.add('show');
-      } finally {
-        cancelBtn.disabled = false;
-        cancelBtn.innerHTML = '<i class="fas fa-ban" style="margin-right:0.5rem;font-size:0.75rem;"></i>Cancel Reservation';
-      }
-    });
+  function showResult(element, message, isError = false) {
+    element.textContent = message;
+    element.style.color = isError ? '#7a2d2d' : 'var(--text-mid)';
+    element.classList.add('show');
   }
+
+  function renderReservation(reservation) {
+    const details = reservation.details;
+    const quote = reservation.quote;
+    summary.innerHTML = '';
+    const heading = document.createElement('h3');
+    heading.textContent = 'Reservation ' + reservation.confirmationNumber;
+    const body = document.createElement('div');
+    body.className = 'reservation-meta';
+    body.textContent = `${details.firstName} ${details.lastName} · ${details.email} · ${date(details.checkin)} - ${date(details.checkout)} · ${details.room.replaceAll('-', ' ')} · Estimated total ${money(quote.total)}`;
+    summary.append(heading, body);
+    ['firstName','lastName','phone','country','checkin','checkout','room','ratePlan','guests','specialRequests'].forEach(id => {
+      if (field(id)) field(id).value = details[id] ?? '';
+    });
+    managePanel.classList.add('show');
+  }
+
+  async function request(url, options) {
+    const response = await fetch(url, options);
+    const json = await response.json();
+    if (!response.ok || !json.success) throw new Error(json.message || 'Request could not be completed.');
+    return json;
+  }
+
+  lookupForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!lookupForm.checkValidity()) return lookupForm.reportValidity();
+    lookupBtn.disabled = true;
+    lookupBtn.textContent = 'Finding...';
+    managePanel.classList.remove('show');
+    manageResult.classList.remove('show');
+    try {
+      const json = await request('/api/reservation/lookup', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(lookupForm)))
+      });
+      activeReservation = json.reservation;
+      renderReservation(activeReservation);
+    } catch (error) {
+      showResult(manageResult, error.message, true);
+    } finally {
+      lookupBtn.disabled = false;
+      lookupBtn.innerHTML = '<i class="fas fa-search" style="margin-right:0.5rem;font-size:0.75rem;"></i>Find Reservation';
+    }
+  });
+
+  modifyForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!modifyForm.checkValidity()) return modifyForm.reportValidity();
+    modifyBtn.disabled = true;
+    modifyBtn.textContent = 'Saving...';
+    cancelResult.classList.remove('show');
+    try {
+      const data = Object.fromEntries(new FormData(modifyForm));
+      data.email = field('email').value;
+      data.guests = data.guests ? Number(data.guests) : undefined;
+      const json = await request('/api/reservation/' + encodeURIComponent(activeReservation.confirmationNumber), {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+      });
+      activeReservation = json.reservation;
+      renderReservation(activeReservation);
+      showResult(cancelResult, json.paymentAdjustment.note);
+    } catch (error) {
+      showResult(cancelResult, error.message, true);
+    } finally {
+      modifyBtn.disabled = false;
+      modifyBtn.innerHTML = '<i class="fas fa-pen" style="margin-right:0.5rem;font-size:0.75rem;"></i>Save Changes';
+    }
+  });
+
+  cancelBtn.addEventListener('click', async () => {
+    if (!activeReservation) return;
+    if (!window.confirm('Cancel this reservation? This action cannot be undone.')) return;
+    cancelBtn.disabled = true;
+    cancelBtn.textContent = 'Processing...';
+    cancelResult.classList.remove('show');
+    try {
+      const json = await request('/api/reservation/cancel', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmationNumber: activeReservation.confirmationNumber, email: field('email').value, reason: field('reason').value })
+      });
+      const emailMessage = json.email?.sent
+        ? 'The cancellation email and PDF receipt were sent to ' + field('email').value + '.'
+        : json.email?.skipped
+          ? 'The cancellation was recorded. Email delivery is not configured; a PDF and HTML email preview were saved on the server.'
+          : 'The cancellation was recorded, but the email could not be sent. Please contact the reservations team; a local preview was saved when available.';
+      showResult(cancelResult, 'Cancellation processed for ' + json.cancellation.confirmationNumber + '. ' + emailMessage);
+      cancelBtn.disabled = true;
+      modifyBtn.disabled = true;
+    } catch (error) {
+      showResult(cancelResult, error.message, true);
+      cancelBtn.disabled = false;
+    } finally {
+      if (!cancelBtn.disabled) cancelBtn.innerHTML = '<i class="fas fa-ban" style="margin-right:0.5rem;font-size:0.75rem;"></i>Cancel Reservation';
+    }
+  });
 </script>
 </body>
 </html>
